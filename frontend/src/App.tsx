@@ -1,22 +1,24 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/clerk-react';
+import { 
+  ModernDashboard, 
+  Header, 
+  Sidebar, 
+  ProgressBar
+} from './components';
+import type { 
+  View, 
+  User, 
+  Course, 
+  ChatMessage, 
+  QuizResult, 
+  QuizProgress, 
+  GeminiResponse 
+} from './components';
 
 // --- Environment Variable Setup for Vite ---
 const FRONTEND_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// --- TYPESCRIPT INTERFACES ---
-type View = 'dashboard' | 'generate' | 'learn' | 'profile';
-interface ChatMessage { role: 'user' | 'model'; parts: { text: string }[]; }
-interface User { name: string; xp: number; level: number; streak: number; avatarUrl: string; lastCompletedDate: string | null; quizHistory: QuizResult[]; }
-interface Lesson { title: string; content: string; xp: number; completed: boolean; quiz?: Quiz; }
-interface Chapter { title: string; lessons: Lesson[]; }
-interface Course { id: string; _id?: string; title: string; description: string; level: 'Beginner' | 'Intermediate' | 'Advanced'; imageUrl: string; chapters: Chapter[]; }
-interface QuizQuestion { question: string; options: string[]; correctAnswer: string; }
-interface Quiz { title: string; questions: QuizQuestion[]; }
-interface QuizResult { courseId: string; quizTitle: string; score: number; correct: number; total: number; date: string; }
-interface QuizProgress { courseId: string; chapterIndex: number; lessonIndex: number; currentQuestionIndex: number; answers: { [key: number]: string }; }
-interface GeminiResponse { candidates: [{ content: { parts: [{ text: string; }]; }; }]; }
 
 // --- LOGO MAP ---
 const topicLogoMap: { [key: string]: string } = {
@@ -34,79 +36,9 @@ const topicLogoMap: { [key: string]: string } = {
 
 // --- UI COMPONENTS ---
 
-const Header: React.FC<{ user: User; onNavigate: (view: View) => void }> = ({ user, onNavigate }) => {
-    return (
-        <header className="bg-gray-800 p-4 flex justify-between items-center shadow-md sticky top-0 z-20">
-            <h1 className="text-2xl font-bold text-white cursor-pointer" onClick={() => onNavigate('dashboard')}>LearnSphere</h1>
-            <div className="flex items-center space-x-4">
-                <nav className="flex items-center space-x-4">
-                    <button onClick={() => onNavigate('dashboard')} className="text-gray-300 hover:text-white">Dashboard</button>
-                    <button onClick={() => onNavigate('profile')} className="text-gray-300 hover:text-white">Profile</button>
-                </nav>
-                <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 cursor-pointer" onClick={() => onNavigate('profile')}>
-                        <img src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-full border-2 border-indigo-500" />
-                        <div>
-                            <div className="font-semibold text-white">{user.name}</div>
-                            <div className="text-sm text-gray-400">Level {user.level} | {user.xp} XP</div>
-                        </div>
-                    </div>
-                    <UserButton afterSignOutUrl="/" />
-                </div>
-            </div>
-        </header>
-    );
-};
 
-const LevelBadge: React.FC<{ level: Course['level'] }> = ({ level }) => {
-    const levelColor = {
-        Beginner: 'bg-green-500 text-green-100',
-        Intermediate: 'bg-yellow-500 text-yellow-100',
-        Advanced: 'bg-red-500 text-red-100',
-    };
-    return (
-        <span className={`absolute top-4 right-4 text-xs font-semibold px-2 py-1 rounded-full ${levelColor[level] || 'bg-gray-500'} z-10`}>
-            {level}
-        </span>
-    );
-};
 
-const CourseCard: React.FC<{ course: Course; onStartLearning: (id: string) => void; isImageLoading: boolean; }> = ({ course, onStartLearning, isImageLoading }) => {
-    return (
-        <div className="bg-gray-800 rounded-lg shadow-lg flex flex-col overflow-hidden relative">
-            <LevelBadge level={course.level} />
-            <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
-                {isImageLoading ? (
-                    <div className="w-full h-full bg-gray-600 animate-pulse"></div>
-                ) : (
-                    <img src={course.imageUrl} alt={course.title} className="h-full w-full object-contain p-4" />
-                )}
-            </div>
-            <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-white">{course.title}</h3>
-                <p className="text-gray-400 mt-2 flex-grow">{course.description}</p>
-                <button onClick={() => onStartLearning(course.id)} className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Start Learning</button>
-            </div>
-        </div>
-    );
-};
 
-const Dashboard: React.FC<{ courses: Course[]; onStartLearning: (id: string) => void; onCreateNew: () => void; isLoading: boolean; error: string | null; generatingImages: Set<string>; }> = ({ courses, onStartLearning, onCreateNew, isLoading, error, generatingImages }) => {
-    if (isLoading) { return <div className="text-center p-10 text-white text-xl">Loading courses...</div>; }
-    if (error) { return (<div className="max-w-3xl mx-auto text-center bg-red-900 bg-opacity-50 border border-red-500 text-white p-6 rounded-lg"><h3 className="text-2xl font-bold text-red-300">Connection Error</h3><p className="mt-2 text-red-200">{error}</p></div>); }
-    return (
-        <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-6"><h2 className="text-3xl font-bold text-white">Your Courses</h2><button onClick={onCreateNew} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">+ Create New Course</button></div>
-            {courses.length === 0 && !isLoading ? (<div className="text-center bg-gray-800 p-10 rounded-lg"><h3 className="text-xl text-white">Welcome!</h3><p className="text-gray-400 mt-2 mb-4">You haven't created any courses yet. Get started now.</p><button onClick={onCreateNew} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">Generate Your First Course</button></div>) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {courses.map(course => (
-                        <CourseCard key={course.id} course={course} onStartLearning={onStartLearning} isImageLoading={generatingImages.has(course.id)} />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
 
 const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> = ({ onCourseCreated }) => {
     const [topic, setTopic] = useState('');
@@ -258,6 +190,8 @@ const LearnSphereApp: React.FC = () => {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [generatingImages, setGeneratingImages] = useState(new Set<string>());
+    const [sidebarCollapsed] = useState(false);
+    const [overallProgress, setOverallProgress] = useState(0);
 
     useEffect(() => { if (isLoaded && clerkUser) { setUser(prev => ({ ...prev, name: clerkUser.fullName ?? 'New Learner', avatarUrl: clerkUser.imageUrl || '' })); } }, [isLoaded, clerkUser]);
 
@@ -327,25 +261,57 @@ const LearnSphereApp: React.FC = () => {
     const handleUpdateQuizProgress = useCallback((progress: QuizProgress) => { setQuizProgress(progress); }, []);
     const activeCourse = useMemo(() => courses.find(c => c.id === activeCourseId) || null, [courses, activeCourseId]);
 
+    // Calculate overall progress for the progress bar
+    useEffect(() => {
+        if (courses.length > 0) {
+            const totalLessons = courses.reduce((total, course) => 
+                total + course.chapters.reduce((chapterTotal, chapter) => 
+                    chapterTotal + chapter.lessons.length, 0), 0);
+            const completedLessons = courses.reduce((total, course) => 
+                total + course.chapters.reduce((chapterTotal, chapter) => 
+                    chapterTotal + chapter.lessons.filter(lesson => lesson.completed).length, 0), 0);
+            setOverallProgress(totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0);
+        }
+    }, [courses]);
+
     const renderContent = () => {
         switch (view) {
-            case 'dashboard': return <Dashboard courses={courses} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} isLoading={isLoading} error={fetchError} generatingImages={generatingImages}/>;
+            case 'dashboard': return <ModernDashboard courses={courses} user={user} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} isLoading={isLoading} error={fetchError} generatingImages={generatingImages}/>;
             case 'generate': return <CourseGenerator onCourseCreated={handleAddCourse} />;
             case 'learn': if(activeCourse) { return <LearningView course={activeCourse} onMarkComplete={handleMarkLessonComplete} quizProgress={quizProgress} onUpdateQuizProgress={handleUpdateQuizProgress} />; } else { setView('dashboard'); return null; }
             case 'profile': return <Profile user={user} />;
-            default: return <Dashboard courses={courses} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} isLoading={isLoading} error={fetchError} generatingImages={generatingImages} />;
+            default: return <ModernDashboard courses={courses} user={user} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} isLoading={isLoading} error={fetchError} generatingImages={generatingImages} />;
         }
     };
     
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-100 font-sans">
-            <Header user={user} onNavigate={setView} />
-            <main className="p-4 sm:p-6 lg:p-8">
-                {renderContent()}
-            </main>
-            <div className="fixed bottom-5 right-5 z-40">
-                <button onClick={() => setIsChatOpen(!isChatOpen)} className="bg-indigo-600 text-white rounded-full h-16 w-16 flex items-center justify-center text-3xl shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-110" aria-label="Toggle AI Tutor">?</button>
+            {/* Progress Bar */}
+            <ProgressBar progress={overallProgress} />
+            
+            {/* Sidebar */}
+            <Sidebar user={user} onNavigate={setView} currentView={view} />
+            
+            {/* Main Content */}
+            <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+                <Header user={user} onNavigate={setView} currentView={view} />
+                <main className="p-4 sm:p-6 lg:p-8">
+                    {renderContent()}
+                </main>
             </div>
+            
+            {/* AI Tutor Button */}
+            <div className="fixed bottom-5 right-5 z-40">
+                <button 
+                    onClick={() => setIsChatOpen(!isChatOpen)} 
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl shadow-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-110" 
+                    aria-label="Toggle AI Tutor"
+                >
+                    🤖
+                </button>
+            </div>
+            
+            {/* Chatbot */}
             {isChatOpen && <Chatbot onClose={() => setIsChatOpen(false)} />}
         </div>
     );
