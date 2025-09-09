@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
-import type { View, User } from './types';
+import React, { useState, useEffect } from 'react';
+import type { View } from './types';
 
 interface SidebarProps {
-  user: User;
-  onNavigate: (view: View) => void;
   currentView: View;
+  onViewChange: (view: View) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isOpen = false, onClose }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  useEffect(() => {
+    // Initialize sidebar state for mobile
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsCollapsed(false);
+      } else {
+        setIsCollapsed(true);
+      }
+    };
 
-  const menuItems = [
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const menuItems: Array<{ id: View; label: string; icon: string }> = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
     { id: 'bookmarks', label: 'Bookmarks', icon: '📚' },
     { id: 'generate', label: 'Create Course', icon: '➕' },
@@ -20,99 +35,105 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
   return (
     <>
       {/* Overlay for mobile */}
-      {!isCollapsed && (
+      {(isOpen || !isCollapsed) && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setIsCollapsed(true)}
+          onClick={() => {
+            setIsCollapsed(true);
+            onClose?.();
+          }}
         />
       )}
       
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300 ${
-        isCollapsed ? 'w-16' : 'w-64'
+      <div className={`fixed left-0 top-16 h-full bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 border-r border-purple-500/30 z-40 transition-all duration-300 backdrop-blur-sm ${
+        (isCollapsed && !isOpen) ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-64'
       }`}>
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between">
-            {!isCollapsed && (
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">LearnSphere</h1>
-            )}
+        {/* Mobile Close Button */}
+        {(!isCollapsed || isOpen) && (
+          <div className="lg:hidden flex justify-end p-4">
             <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors"
+              onClick={() => {
+                setIsCollapsed(true);
+                onClose?.();
+              }}
+              className="text-white hover:text-purple-300 transition-colors"
             >
-              {isCollapsed ? '→' : '←'}
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
-        </div>
-
-        {/* User Info */}
+        )}
+        
+        {/* Brand */}
         {!isCollapsed && (
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-4 lg:p-6 border-b border-purple-500/20">
             <div className="flex items-center space-x-3">
-              <img 
-                src={user.avatarUrl} 
-                alt={user.name} 
-                className="w-10 h-10 rounded-full border-2 border-indigo-500" 
-              />
               <div>
-                <div className="font-semibold text-gray-900 dark:text-white text-sm">{user.name}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">Level {user.level} • {user.xp} XP</div>
-              </div>
-            </div>
-            
-            {/* Streak */}
-            <div className="mt-3 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Streak</span>
-                <span className="text-orange-400 font-bold">{user.streak} 🔥</span>
+                <div className="font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent text-base lg:text-lg">Navigation</div>
+                <div className="text-xs text-purple-300">Quick Access</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Navigation */}
-        <nav className="p-4">
-          <ul className="space-y-2">
+        <nav className="flex-1 p-4 lg:p-6">
+          <div className="space-y-2">
             {menuItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => onNavigate(item.id as View)}
-                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                    currentView === item.id
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
-                </button>
-              </li>
+              <button
+                key={item.id}
+                onClick={() => {
+                  onViewChange(item.id);
+                  if (window.innerWidth < 1024) {
+                    setIsCollapsed(true);
+                  }
+                }}
+                className={`w-full flex items-center space-x-3 px-3 lg:px-4 py-2 lg:py-3 rounded-xl transition-all duration-200 group ${
+                  currentView === item.id
+                    ? 'bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 text-white shadow-lg'
+                    : 'text-purple-200 hover:text-white hover:bg-purple-800/30 border border-transparent hover:border-purple-500/30'
+                }`}
+              >
+                <div className={`flex-shrink-0 transition-transform duration-200 ${
+                  currentView === item.id ? 'scale-110' : 'group-hover:scale-105'
+                }`}>
+                  {item.icon}
+                </div>
+                {(!isCollapsed || isOpen) && (
+                  <span className="font-medium text-sm truncate">{item.label}</span>
+                )}
+                {(!isCollapsed || isOpen) && currentView === item.id && (
+                  <div className="ml-auto w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                )}
+              </button>
             ))}
-          </ul>
+          </div>
         </nav>
 
-        {/* Progress Summary */}
-        {!isCollapsed && (
-          <div className="absolute bottom-4 left-4 right-4">
-            <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-              <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Level Progress</div>
-              <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(user.xp % 100)}%` }}
-                />
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {user.xp % 100}/100 XP to Level {user.level + 1}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Collapse Button - Desktop Only */}
+        <div className="hidden lg:block p-4 lg:p-6 border-t border-purple-500/20">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="w-full flex items-center justify-center space-x-2 px-3 lg:px-4 py-2 lg:py-3 rounded-xl bg-purple-800/30 hover:bg-purple-700/40 text-purple-200 hover:text-white transition-all duration-200 border border-purple-500/30 hover:border-purple-400/50"
+          >
+            {!isCollapsed && <span className="text-sm font-medium">Collapse</span>}
+            <svg 
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isCollapsed ? 'rotate-180' : ''
+              }`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        </div>
+        
       </div>
 
-      {/* Main content spacer */}
-      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`} />
     </>
   );
 };

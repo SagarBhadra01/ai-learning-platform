@@ -7,6 +7,7 @@ export interface ChatMessage {
 }
 
 export interface User { 
+  id: string;
   name: string; 
   xp: number; 
   level: number; 

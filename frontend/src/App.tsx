@@ -17,7 +17,6 @@ import type {
   QuizProgress, 
   GeminiResponse 
 } from './components';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 
 // --- Environment Variable Setup for Vite ---
@@ -191,23 +190,34 @@ const SignInPage: React.FC = () => { return ( <div className="min-h-screen bg-gr
 
 const LearnSphereApp: React.FC = () => {
     const { user: clerkUser, isLoaded } = useUser();
-    const [user, setUser] = useState<User>({ name: 'New Learner', xp: 0, level: 1, streak: 0, avatarUrl: '', lastCompletedDate: null, quizHistory: [] });
+    const [user, setUser] = useState<User>({
+        id: '1',
+        name: 'New Learner',
+        avatarUrl: '',
+        level: 1,
+        xp: 0,
+        xpToNextLevel: 100,
+        streak: 0,
+        lastCompletedDate: null,
+        quizHistory: []
+    });
     const [view, setView] = useState<View>('dashboard');
     const [courses, setCourses] = useState<Course[]>([]);
     const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
     const [quizProgress, setQuizProgress] = useState<QuizProgress | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [fetchError, setFetchError] = useState<string | null>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [generatingImages, setGeneratingImages] = useState(new Set<string>());
-    const [sidebarCollapsed] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [generatingImages, setGeneratingImages] = useState<Set<string>>(new Set());
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [overallProgress, setOverallProgress] = useState(0);
 
     // Load user XP data from backend when user is loaded
     useEffect(() => {
         if (isLoaded && clerkUser) {
-            setUser(prev => ({
+            setUser((prev: User) => ({
                 ...prev,
+                id: clerkUser.id,
                 name: clerkUser.fullName ?? 'New Learner',
                 avatarUrl: clerkUser.imageUrl || ''
             }));
@@ -226,7 +236,7 @@ const LearnSphereApp: React.FC = () => {
                 streak: { current: number; lastActivity?: Date };
             };
             
-            setUser(prev => ({
+            setUser((prev: User) => ({
                 ...prev,
                 xp: xpData.totalXP,
                 level: xpData.currentLevel,
@@ -351,7 +361,7 @@ const LearnSphereApp: React.FC = () => {
             });
             
             // Update quiz history
-            setUser(prevUser => ({
+            setUser((prevUser: User) => ({
                 ...prevUser,
                 quizHistory: [...prevUser.quizHistory, { ...quizResult, date: new Date().toISOString() }]
             }));
@@ -397,18 +407,27 @@ const LearnSphereApp: React.FC = () => {
     };
     
     return (
-        <div className="relative min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+        <div className="relative min-h-screen bg-gray-100 text-gray-900 font-sans">
             {/* Progress Bar */}
             <ProgressBar progress={overallProgress} />
             
-            {/* Sidebar */}
-            <Sidebar user={user} onNavigate={setView} currentView={view} />
-            
-            {/* Main Content */}
-            <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-                <Header user={user} onNavigate={setView} currentView={view} />
-                <main className="p-4 sm:p-6 lg:p-8">
-                    {renderContent()}
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                <Header user={user} onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+                <Sidebar 
+                  currentView={view} 
+                  onViewChange={(newView) => {
+                    setView(newView);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  isOpen={isMobileMenuOpen}
+                  onClose={() => setIsMobileMenuOpen(false)}
+                />
+                <main className="lg:ml-64 pt-16 min-h-screen transition-all duration-300">
+                    <div className="p-4 sm:p-6 lg:p-8 w-full">
+                        <div className="max-w-full">
+                            {renderContent()}
+                        </div>
+                    </div>
                 </main>
             </div>
             
@@ -430,12 +449,10 @@ const LearnSphereApp: React.FC = () => {
 };
 
 const App: React.FC = () => (
-    <ThemeProvider>
-        <BookmarkProvider>
-            <SignedOut><SignInPage /></SignedOut>
-            <SignedIn><LearnSphereApp /></SignedIn>
-        </BookmarkProvider>
-    </ThemeProvider>
+    <BookmarkProvider>
+        <SignedOut><SignInPage /></SignedOut>
+        <SignedIn><LearnSphereApp /></SignedIn>
+    </BookmarkProvider>
 );
 
 export default App;

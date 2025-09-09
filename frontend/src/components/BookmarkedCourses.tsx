@@ -26,10 +26,10 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
   if (bookmarkedCourseList.length === 0) {
     return (
       <div className="max-w-7xl mx-auto">
-        <div className="text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 p-12 rounded-2xl border border-gray-200 dark:border-gray-700">
+        <div className="text-center bg-gradient-to-br from-gray-600 to-gray-800 p-12 rounded-2xl border border-gray-200">
           <div className="text-6xl mb-6">📚</div>
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">No Bookmarked Courses</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-md mx-auto">
+          <h3 className="text-3xl font-bold text-white mb-4">No Bookmarked Courses</h3>
+          <p className="text-white text-lg mb-8 max-w-md mx-auto">
             You haven't bookmarked any courses yet. Start exploring and bookmark courses you want to save for later!
           </p>
         </div>
@@ -41,14 +41,14 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Bookmarked Courses</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-3xl font-bold text-white mb-2">Bookmarked Courses</h2>
+          <p className="text-white">
             Your saved courses ({bookmarkedCourseList.length} course{bookmarkedCourseList.length !== 1 ? 's' : ''})
           </p>
         </div>
-        <div className="flex items-center space-x-2 bg-yellow-100 dark:bg-yellow-900 dark:bg-opacity-30 px-4 py-2 rounded-full">
-          <span className="text-yellow-600 dark:text-yellow-400">⭐</span>
-          <span className="text-yellow-700 dark:text-yellow-300 text-sm font-medium">
+        <div className="flex items-center space-x-2 bg-yellow-100 px-4 py-2 rounded-full">
+          <span className="text-yellow-600">⭐</span>
+          <span className="text-yellow-700 text-sm font-medium">
             {bookmarkedCourseList.length} bookmarked
           </span>
         </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Course, User } from './types';
 import { HeroSection } from './HeroSection';
 import { ContinueLearning } from './ContinueLearning';
@@ -25,13 +25,22 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
   error, 
   generatingImages 
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   if (isLoading) { 
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <div className="text-white text-xl">Loading your courses...</div>
-          <div className="text-gray-400 text-sm mt-2">This might take a moment</div>
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-cyan-200 border-t-cyan-500 rounded-full animate-spin mx-auto mt-2 ml-2" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
+          </div>
+          <div className="text-white text-2xl font-bold mb-2 animate-pulse">Generating AI-Powered Content...</div>
+          <div className="text-purple-300 text-sm">Crafting your personalized learning experience</div>
         </div>
       </div>
     ); 
@@ -39,13 +48,13 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
   
   if (error) { 
     return (
-      <div className="max-w-3xl mx-auto text-center bg-red-900 bg-opacity-50 border border-red-500 text-white p-8 rounded-xl">
-        <div className="text-6xl mb-4">⚠️</div>
-        <h3 className="text-2xl font-bold text-red-300 mb-4">Connection Error</h3>
-        <p className="text-red-200 mb-6">{error}</p>
+      <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-red-900/50 to-pink-900/50 backdrop-blur-sm border border-red-500/30 text-white p-8 rounded-3xl shadow-2xl">
+        <div className="text-6xl mb-4 animate-bounce">⚠️</div>
+        <h3 className="text-3xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent mb-4">Connection Error</h3>
+        <p className="text-red-200 mb-6 text-lg">{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+          className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
         >
           Try Again
         </button>
@@ -71,38 +80,51 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
   });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className={`w-full space-y-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
       {/* Hero Section */}
       <HeroSection user={user} onCreateCourse={onCreateNew} />
 
       {/* Continue Learning Section */}
-      <ContinueLearning courses={courses} onContinueLearning={onStartLearning} />
+      <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: '200ms'}}>
+        <ContinueLearning courses={courses} onContinueLearning={onStartLearning} />
+      </div>
 
       {/* Available Courses */}
       {availableCourses.length > 0 && (
-        <div>
-          <div className="flex justify-between items-center mb-6">
+        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: '400ms'}}>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Available Courses</h2>
-              <p className="text-gray-400">Discover new topics and expand your knowledge</p>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent mb-2 sm:mb-3">Available Courses</h2>
+              <p className="text-purple-300 text-sm sm:text-base lg:text-lg">Discover new topics and expand your knowledge with AI-powered learning</p>
             </div>
             <button 
               onClick={onCreateNew} 
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="group bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-700 hover:via-pink-700 hover:to-cyan-700 text-white font-bold py-3 px-4 sm:py-4 sm:px-8 rounded-xl sm:rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl border border-white/20 w-full sm:w-auto"
             >
-              ✨ Create New Course
+              <div className="flex items-center gap-3">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                <span className="hidden sm:inline">Create New Course</span>
+                <span className="sm:hidden">Create Course</span>
+              </div>
             </button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableCourses.map(course => (
-              <EnhancedCourseCard 
-                key={course.id} 
-                course={course} 
-                onStartLearning={onStartLearning} 
-                onDeleteCourse={onDeleteCourse}
-                isImageLoading={generatingImages.has(course.id)} 
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {availableCourses.map((course, index) => (
+              <div 
+                key={course.id}
+                className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                style={{transitionDelay: `${600 + index * 100}ms`}}
+              >
+                <EnhancedCourseCard 
+                  course={course} 
+                  onStartLearning={onStartLearning} 
+                  onDeleteCourse={onDeleteCourse}
+                  isImageLoading={generatingImages.has(course.id)} 
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -110,32 +132,43 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
 
       {/* Completed Courses */}
       {completedCourses.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-3 mb-6">
-            <h2 className="text-2xl font-bold text-white">Completed Courses</h2>
-            <div className="flex items-center space-x-2 bg-green-900 bg-opacity-50 px-3 py-1 rounded-full">
-              <span className="text-green-400 text-sm">🎉</span>
-              <span className="text-green-300 text-sm font-medium">{completedCourses.length} completed</span>
+        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{transitionDelay: '800ms'}}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Completed Courses</h2>
+            <div className="flex items-center space-x-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-500/30 px-4 py-2 rounded-full">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-300 font-medium">{completedCourses.length} completed</span>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {completedCourses.map(course => (
-              <div key={course.id} className="bg-gray-800 rounded-lg p-4 border border-green-500 border-opacity-50">
-                <div className="flex items-center space-x-3 mb-3">
-                  <img 
-                    src={course.imageUrl} 
-                    alt={course.title}
-                    className="w-10 h-10 rounded-lg object-cover"
-                  />
-                  <div>
-                    <h3 className="text-white font-semibold text-sm">{course.title}</h3>
-                    <span className="text-green-400 text-xs">✓ Completed</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {completedCourses.map((course, index) => (
+              <div 
+                key={course.id} 
+                className={`group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-green-500/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                style={{transitionDelay: `${1000 + index * 100}ms`}}
+              >
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="relative">
+                    <img 
+                      src={course.imageUrl} 
+                      alt={course.title}
+                      className="w-12 h-12 rounded-xl object-cover border-2 border-green-400/50"
+                    />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-white font-bold text-sm group-hover:text-green-300 transition-colors">{course.title}</h3>
+                    <span className="text-green-400 text-xs font-medium">✓ Completed</span>
                   </div>
                 </div>
                 <button
                   onClick={() => onStartLearning(course.id)}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors"
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
                   Review Course
                 </button>
@@ -147,17 +180,27 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
 
       {/* Empty State */}
       {courses.length === 0 && !isLoading && (
-        <div className="text-center bg-gradient-to-br from-gray-800 to-gray-900 p-12 rounded-2xl border border-gray-700">
-          <div className="text-6xl mb-6">🚀</div>
-          <h3 className="text-3xl font-bold text-white mb-4">Welcome to LearnSphere!</h3>
-          <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto">
-            You haven't created any courses yet. Let's get started on your learning journey!
+        <div className={`text-center bg-gradient-to-br from-slate-800/50 via-purple-900/50 to-slate-800/50 backdrop-blur-sm border border-purple-500/30 p-16 rounded-3xl shadow-2xl transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+          <div className="relative mb-8">
+            <div className="text-8xl animate-bounce">🚀</div>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 rounded-full blur-xl"></div>
+          </div>
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent mb-4 sm:mb-6">Welcome to AI LearnSphere!</h3>
+          <p className="text-purple-300 text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
+            Embark on your personalized learning journey powered by cutting-edge AI technology. 
+            Create courses tailored to your interests and skill level.
           </p>
           <button 
             onClick={onCreateNew} 
-            className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+            className="group bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-700 hover:via-pink-700 hover:to-cyan-700 text-white font-bold py-4 px-6 sm:py-6 sm:px-12 rounded-xl sm:rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl text-lg sm:text-xl border border-white/20"
           >
-            🎯 Generate Your First Course
+            <div className="flex items-center gap-4">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              <span className="hidden sm:inline">Generate Your First Course</span>
+              <span className="sm:hidden">Create First Course</span>
+            </div>
           </button>
         </div>
       )}
