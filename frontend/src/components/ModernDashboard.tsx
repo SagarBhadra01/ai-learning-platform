@@ -9,6 +9,7 @@ interface ModernDashboardProps {
   user: User;
   onStartLearning: (id: string) => void;
   onCreateNew: () => void;
+  onDeleteCourse?: (id: string) => void;
   isLoading: boolean;
   error: string | null;
   generatingImages: Set<string>;
@@ -19,6 +20,7 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
   user,
   onStartLearning, 
   onCreateNew, 
+  onDeleteCourse,
   isLoading, 
   error, 
   generatingImages 
@@ -98,6 +100,7 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
                 key={course.id} 
                 course={course} 
                 onStartLearning={onStartLearning} 
+                onDeleteCourse={onDeleteCourse}
                 isImageLoading={generatingImages.has(course.id)} 
               />
             ))}

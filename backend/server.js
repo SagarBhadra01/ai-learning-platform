@@ -40,7 +40,11 @@ app.get('/', (req, res) => {
 
 app.get('/api/courses', async (req, res) => {
     try {
-        const courses = await Course.find().sort({ createdAt: -1 });
+        const { userId } = req.query;
+        if (!userId) {
+            return res.status(400).json({ message: 'userId query parameter is required.' });
+        }
+        const courses = await Course.find({ ownerId: userId }).sort({ createdAt: -1 });
         res.status(200).json(courses);
     } catch (error) {
         console.error("Error fetching courses:", error.message);
@@ -48,12 +52,38 @@ app.get('/api/courses', async (req, res) => {
     }
 });
 
-app.post('/api/generate-course', async (req, res) => {
-    const { topic, level } = req.body;
-    console.log(`POST /api/generate-course route hit with topic: "${topic}", level: "${level}"`);
+app.delete('/api/courses/:courseId', async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { userId } = req.query;
+        
+        if (!userId) {
+            return res.status(400).json({ message: 'userId query parameter is required.' });
+        }
+        
+        // Find and delete the course only if it belongs to the user
+        const deletedCourse = await Course.findOneAndDelete({ 
+            _id: courseId, 
+            ownerId: userId 
+        });
+        
+        if (!deletedCourse) {
+            return res.status(404).json({ message: 'Course not found or not authorized to delete.' });
+        }
+        
+        res.status(200).json({ message: 'Course deleted successfully.', courseId });
+    } catch (error) {
+        console.error("Error deleting course:", error.message);
+        res.status(500).json({ message: "Failed to delete course." });
+    }
+});
 
-    if (!topic || !level) {
-        return res.status(400).json({ message: 'Topic and level are required.' });
+app.post('/api/generate-course', async (req, res) => {
+    const { topic, level, userId } = req.body;
+    console.log(`POST /api/generate-course route hit with topic: "${topic}", level: "${level}", userId: "${userId}"`);
+
+    if (!topic || !level || !userId) {
+        return res.status(400).json({ message: 'Topic, level, and userId are required.' });
     }
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -149,6 +179,9 @@ app.post('/api/generate-course', async (req, res) => {
             const searchQuery = encodeURIComponent(generatedCourseData.title || topic);
             generatedCourseData.imageUrl = `https://source.unsplash.com/800x600/?${searchQuery}`;
         }
+
+        // Add ownerId to the course data
+        generatedCourseData.ownerId = userId;
 
         const newCourse = new Course(generatedCourseData);
         const savedCourse = await newCourse.save();

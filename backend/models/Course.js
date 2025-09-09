@@ -36,13 +36,16 @@ const CourseSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // NEW: Added level to match the frontend 'Course' type
+    ownerId: {
+        type: String,
+        required: true,
+        index: true
+    },
     level: {
         type: String,
         required: true,
         enum: ['Beginner', 'Intermediate', 'Advanced'], // Ensures data integrity
     },
-    // NEW: Added imageUrl to store the course image link
     imageUrl: {
         type: String,
         required: true,
