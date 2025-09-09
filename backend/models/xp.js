@@ -97,6 +97,16 @@ const xpSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Pre-save hook to ensure proper initialization
+xpSchema.pre('save', function(next) {
+  // Only run this for new documents
+  if (this.isNew) {
+    // Ensure xpToNextLevel is calculated correctly for new users
+    this.xpToNextLevel = this.calculateXPForLevel(this.currentLevel + 1) - this.totalXP;
+  }
+  next();
+});
+
 // Calculate XP required for next level (exponential growth)
 xpSchema.methods.calculateXPForLevel = function(level) {
   return Math.floor(100 * Math.pow(1.5, level - 1));

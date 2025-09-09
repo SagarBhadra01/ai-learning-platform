@@ -10,6 +10,7 @@ export interface User {
   name: string; 
   xp: number; 
   level: number; 
+  xpToNextLevel?: number;
   streak: number; 
   avatarUrl: string; 
   lastCompletedDate: string | null; 

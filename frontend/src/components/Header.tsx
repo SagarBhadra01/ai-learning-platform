@@ -62,11 +62,6 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, currentView })
             className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 rounded-lg p-2 transition-colors" 
             onClick={() => onNavigate('profile')}
           >
-            <img 
-              src={user.avatarUrl} 
-              alt={user.name} 
-              className="w-8 h-8 rounded-full border-2 border-indigo-500" 
-            />
             <div className="hidden sm:block">
               <div className="font-semibold text-white text-sm">{user.name}</div>
               <div className="text-xs text-gray-400">Level {user.level}</div>
