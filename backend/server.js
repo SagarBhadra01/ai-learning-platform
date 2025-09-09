@@ -94,29 +94,29 @@ app.post('/api/generate-course', async (req, res) => {
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
     
     const prompt = `
-      You are an expert instructional designer. A user wants a course on the topic: "${topic}" at a "${level}" level.
-      Generate a comprehensive, structured course plan tailored to that difficulty level. Add quizzes to each lesson and include a relevant royalty-free image URL based on the specific ${topic}.
-      The output MUST be a single, valid JSON object and nothing else.
-
-      The JSON object must have the following structure:
+      You are an expert instructional designer. Generate a course on "${topic}" at "${level}" level.
+      
+      CRITICAL: Return ONLY valid JSON. No explanations, no markdown, no extra text.
+      
+      JSON Structure:
       {
         "title": "Course Title",
-        "description": "A short, engaging description of the course.",
+        "description": "Brief course description",
         "level": "${level}",
-        "imageUrl": "A royalty-free image URL relevant to the course topic (use Unsplash or similar, based on the course title)",
+        "imageUrl": "https://source.unsplash.com/800x600/?${encodeURIComponent(topic)}",
         "chapters": [
           {
-            "title": "Chapter 1 Title",
+            "title": "Chapter Title",
             "lessons": [
               {
-                "title": "Lesson 1.1 Title",
-                "content": "The educational content for this lesson in detailed HTML format with headings, paragraphs, and lists.",
+                "title": "Lesson Title",
+                "content": "<h2>Lesson Content</h2><p>Educational content in HTML format with at least 100 words.</p>",
                 "xp": 10,
                 "quiz": {
-                  "title": "Quiz title",
+                  "title": "Lesson Quiz",
                   "questions": [
                     {
-                      "question": "Sample question?",
+                      "question": "Question text?",
                       "options": ["Option A", "Option B", "Option C", "Option D"],
                       "correctAnswer": "Option A"
                     }
@@ -129,11 +129,13 @@ app.post('/api/generate-course', async (req, res) => {
       }
 
       Requirements:
-      - At least 5 chapters.
-      - Each chapter must have at least 3 lessons.
-      - Each lesson must have at least 150 words of HTML content.
-      - Each lesson must include a quiz with 3-5 multiple-choice questions.
-      - The imageUrl should be a relevant royalty-free image link from Unsplash, using the course title as the search keyword.
+      - Exactly 3 chapters
+      - Each chapter has exactly 2 lessons
+      - Each lesson has 2-3 quiz questions
+      - Keep content concise but educational
+      - Ensure all JSON is properly formatted with no trailing commas
+      - Use double quotes for all strings
+      - Escape any quotes in content with backslashes
     `;
 
     try {
@@ -145,20 +147,50 @@ app.post('/api/generate-course', async (req, res) => {
         });
         
         let rawText = response.data.candidates[0].content.parts[0].text;
+        console.log("Raw response from Gemini:", rawText.substring(0, 500) + "...");
+        
+        // Clean up the response text more thoroughly
         rawText = rawText.replace(/```json|```/g, '').trim();
+        rawText = rawText.replace(/^\s*[\r\n]/gm, ''); // Remove empty lines
+        rawText = rawText.replace(/,\s*}/g, '}'); // Remove trailing commas before }
+        rawText = rawText.replace(/,\s*]/g, ']'); // Remove trailing commas before ]
 
         let generatedCourseData;
         try {
             generatedCourseData = JSON.parse(rawText);
         } catch (err) {
-            console.warn("Invalid JSON, attempting repair...");
-            generatedCourseData = JSON.parse(jsonrepair(rawText));
+            console.warn("Invalid JSON, attempting repair...", err.message);
+            const errorPos = parseInt(err.message.match(/position (\d+)/)?.[1]) || 0;
+            console.log("Problematic JSON around position:", rawText.substring(Math.max(0, errorPos-100), errorPos+100));
+            
+            try {
+                const repairedJson = jsonrepair(rawText);
+                generatedCourseData = JSON.parse(repairedJson);
+            } catch (repairErr) {
+                console.error("JSON repair also failed:", repairErr.message);
+                console.log("Failed JSON snippet:", rawText.substring(0, 1000));
+                return res.status(500).json({ 
+                    message: 'AI generated malformed course data. Please try again with a different topic or level.',
+                    details: 'JSON parsing failed even after repair attempts'
+                });
+            }
         }
 
         // --- Normalize Gemini output to match schema ---
+        // Validate that the generated course data has the required structure
+        if (!generatedCourseData || !generatedCourseData.chapters || !Array.isArray(generatedCourseData.chapters)) {
+            console.error("Invalid course data structure:", generatedCourseData);
+            return res.status(500).json({ message: 'Generated course data is malformed. Please try again.' });
+        }
+
         generatedCourseData.chapters.forEach(chapter => {
+            if (!chapter.lessons || !Array.isArray(chapter.lessons)) {
+                console.error("Invalid chapter structure:", chapter);
+                return;
+            }
+            
             chapter.lessons.forEach(lesson => {
-                if (lesson.quiz) {
+                if (lesson.quiz && lesson.quiz.questions && Array.isArray(lesson.quiz.questions)) {
                     // Ensure quiz.title exists
                     if (!lesson.quiz.title) {
                         lesson.quiz.title = `Quiz for ${lesson.title}`;
