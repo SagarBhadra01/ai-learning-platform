@@ -70,19 +70,195 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
         }
     };
     return (
-        <div className="max-w-2xl mx-auto bg-gray-800 p-8 rounded-lg">
-            <h2 className="text-3xl font-bold text-white mb-4">Create a New Course</h2>
-            <p className="text-gray-400 mb-6">Enter a topic you want to learn about and choose a difficulty level.</p>
-            <div className="flex flex-col space-y-4">
-                <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g., 'React JS'" className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled={isLoading}/>
-                <select value={level} onChange={(e) => setLevel(e.target.value as Course['level'])} className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled={isLoading}>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
-                <button onClick={handleGenerate} disabled={isLoading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 disabled:bg-gray-500 disabled:cursor-not-allowed">{isLoading ? 'Generating...' : 'Generate Course'}</button>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                {/* Header Section */}
+                <div className="text-center mb-12">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full mb-6 shadow-2xl">
+                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                    </div>
+                    <h1 className="text-6xl font-extrabold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                        AI Course Creator
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        Transform any topic into a comprehensive learning experience with our intelligent course generation system
+                    </p>
+                </div>
+
+                {/* Main Content */}
+                <div className="grid lg:grid-cols-5 gap-8 items-start">
+                    {/* Form Section */}
+                    <div className="lg:col-span-3">
+                        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+                            <div className="space-y-8">
+                                {/* Course Topic */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-sm">1</span>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-900">What do you want to learn?</h3>
+                                    </div>
+                                    <div className="relative group">
+                                        <input 
+                                            type="text" 
+                                            value={topic} 
+                                            onChange={(e) => setTopic(e.target.value)} 
+                                            placeholder="Enter your topic (e.g., Machine Learning, Web Development, Digital Marketing)" 
+                                            className="w-full px-6 py-5 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-violet-500 focus:bg-white transition-all duration-300 text-lg group-hover:border-gray-300"
+                                            disabled={isLoading}
+                                        />
+                                        <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
+                                            <svg className="w-6 h-6 text-gray-400 group-hover:text-violet-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Difficulty Level */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-sm">2</span>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-900">Choose your level</h3>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {(['Beginner', 'Intermediate', 'Advanced'] as const).map((levelOption) => (
+                                            <button
+                                                key={levelOption}
+                                                type="button"
+                                                onClick={() => setLevel(levelOption)}
+                                                disabled={isLoading}
+                                                className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-105 ${
+                                                    level === levelOption
+                                                        ? 'border-violet-500 bg-gradient-to-br from-violet-50 to-purple-50 shadow-lg'
+                                                        : 'border-gray-200 bg-white hover:border-violet-300 hover:shadow-md'
+                                                } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
+                                            >
+                                                <div className="text-center space-y-3">
+                                                    <div className={`text-4xl transition-transform group-hover:scale-110 ${
+                                                        level === levelOption ? 'animate-pulse' : ''
+                                                    }`}>
+                                                        {levelOption === 'Beginner' && '🌱'}
+                                                        {levelOption === 'Intermediate' && '🚀'}
+                                                        {levelOption === 'Advanced' && '⚡'}
+                                                    </div>
+                                                    <div className={`font-bold text-lg ${
+                                                        level === levelOption ? 'text-violet-700' : 'text-gray-700'
+                                                    }`}>
+                                                        {levelOption}
+                                                    </div>
+                                                    <div className={`text-sm ${
+                                                        level === levelOption ? 'text-violet-600' : 'text-gray-500'
+                                                    }`}>
+                                                        {levelOption === 'Beginner' && 'Perfect for newcomers'}
+                                                        {levelOption === 'Intermediate' && 'Some experience required'}
+                                                        {levelOption === 'Advanced' && 'For experienced learners'}
+                                                    </div>
+                                                </div>
+                                                {level === levelOption && (
+                                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center">
+                                                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Generate Button */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-sm">3</span>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-900">Generate your course</h3>
+                                    </div>
+                                    <button 
+                                        onClick={handleGenerate} 
+                                        disabled={isLoading || !topic.trim()} 
+                                        className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:via-purple-700 hover:to-indigo-700 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-xl relative overflow-hidden group"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                        <div className="relative z-10">
+                                            {isLoading ? (
+                                                <div className="flex items-center justify-center space-x-3">
+                                                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    <span>Creating Your Course...</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center space-x-3">
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                    </svg>
+                                                    <span>Generate Course with AI</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </button>
+                                </div>
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded-2xl">
+                                        <div className="flex items-start">
+                                            <div className="flex-shrink-0">
+                                                <svg className="h-6 w-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div className="ml-3">
+                                                <h4 className="text-red-800 font-semibold">Error</h4>
+                                                <p className="text-red-700 mt-1">{error}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Features Section */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                                <span className="text-3xl mr-3">✨</span>
+                                AI-Powered Features
+                            </h3>
+                            <div className="space-y-4">
+                                {[
+                                    { icon: '📚', title: 'Structured Chapters', desc: 'Organized learning modules' },
+                                    { icon: '🎯', title: 'Interactive Quizzes', desc: 'Test your knowledge' },
+                                    { icon: '⭐', title: 'Progress Tracking', desc: 'Monitor your advancement' },
+                                    { icon: '🧠', title: 'Smart Content', desc: 'AI-generated explanations' }
+                                ].map((feature, index) => (
+                                    <div key={index} className="flex items-start space-x-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-purple-50 transition-all duration-300">
+                                        <div className="text-2xl">{feature.icon}</div>
+                                        <div>
+                                            <h4 className="font-semibold text-gray-900">{feature.title}</h4>
+                                            <p className="text-gray-600 text-sm">{feature.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-violet-100 to-purple-100 rounded-3xl p-8 text-center">
+                            <div className="text-6xl mb-4">🎓</div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Ready to Learn?</h3>
+                            <p className="text-gray-600 text-sm">
+                                Our AI will create a personalized learning path just for you
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
         </div>
     );
 };
@@ -184,7 +360,117 @@ const LearningView: React.FC<{ course: Course; onMarkComplete: (courseId: string
     );
 };
 
-const Profile: React.FC<{ user: User }> = ({ user }) => { return ( <div className="max-w-4xl mx-auto bg-gray-800 p-8 rounded-lg text-white"><h2 className="text-3xl font-bold mb-6">Your Profile</h2><div className="grid grid-cols-1 md:grid-cols-2 gap-6"><div><img src={user.avatarUrl} alt={user.name} className="w-32 h-32 rounded-full mx-auto border-4 border-indigo-500" /><h3 className="text-2xl font-semibold text-center mt-4">{user.name}</h3></div><div className="space-y-4 text-lg"><p><strong>Level:</strong> {user.level}</p><p><strong>Total XP:</strong> {user.xp}</p><p><strong>Current Streak:</strong> {user.streak} days 🔥</p><p><strong>Last Completed:</strong> {user.lastCompletedDate || 'N/A'}</p></div></div><div className="mt-8"><h3 className="text-2xl font-bold mb-4">Quiz History</h3>{user.quizHistory.length > 0 ? (<ul className="space-y-2">{user.quizHistory.map((q, i) => (<li key={i} className="bg-gray-700 p-3 rounded-md flex justify-between"><span>{q.quizTitle}</span><span className={q.score > 70 ? 'text-green-400' : 'text-yellow-400'}>Score: {q.score}% ({q.correct}/{q.total})</span></li>))}</ul>) : <p className="text-gray-400">No quiz history yet.</p>}</div></div> ); };
+const Profile: React.FC<{ user: User }> = ({ user }) => {
+  const calculateXPForLevel = (level: number) => {
+    return Math.floor(100 * Math.pow(1.5, level - 1));
+  };
+
+  const getAchievementBadges = () => {
+    const badges = [];
+    if (user.streak >= 7) badges.push({ icon: '🔥', title: 'Week Warrior', desc: '7+ day streak' });
+    if (user.streak >= 30) badges.push({ icon: '💪', title: 'Month Master', desc: '30+ day streak' });
+    if (user.level >= 5) badges.push({ icon: '⭐', title: 'Rising Star', desc: 'Reached Level 5' });
+    if (user.level >= 10) badges.push({ icon: '👑', title: 'Learning King', desc: 'Reached Level 10' });
+    if (user.quizHistory.length >= 10) badges.push({ icon: '🎯', title: 'Quiz Master', desc: '10+ quizzes completed' });
+    return badges;
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Profile Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-3xl p-8 shadow-2xl">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        </div>
+
+        <div className="relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            {/* Avatar Section */}
+            <div className="relative">
+              <div className="w-40 h-40 bg-gradient-to-br from-purple-400 via-pink-500 to-cyan-500 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
+                <div className="w-36 h-36 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center">
+                  <img 
+                    src={user.avatarUrl} 
+                    alt={user.name}
+                    className="w-32 h-32 rounded-full border-4 border-white/20 shadow-xl object-cover"
+                  />
+                </div>
+              </div>
+              
+              {/* Level Badge */}
+              <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-xl animate-bounce">
+                {user.level}
+              </div>
+            </div>
+
+            {/* User Info */}
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent mb-4">
+                {user.name}
+              </h1>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-4">
+                  <div className="text-2xl mb-1">⭐</div>
+                  <div className="text-white font-bold text-lg">Level {user.level}</div>
+                  <div className="text-yellow-200 text-sm">{user.xp.toLocaleString()} XP</div>
+                </div>
+                <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 backdrop-blur-sm border border-orange-500/30 rounded-2xl p-4">
+                  <div className="text-2xl mb-1">🔥</div>
+                  <div className="text-white font-bold text-lg">{user.streak} Days</div>
+                  <div className="text-orange-200 text-sm">Current Streak</div>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-purple-200 font-medium">Level {user.level} Progress</span>
+                  <span className="text-white font-bold bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 rounded-full text-sm">
+                    {user.xpToNextLevel ? `${Math.max(0, (calculateXPForLevel(user.level + 1) - user.xpToNextLevel))}/${calculateXPForLevel(user.level + 1)}` : `${user.xp % 100}/100`} XP
+                  </span>
+                </div>
+                <div className="w-full bg-slate-700/50 rounded-full h-4 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 h-4 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                    style={{ 
+                      width: user.xpToNextLevel 
+                        ? `${Math.max(0, Math.min(100, ((calculateXPForLevel(user.level + 1) - user.xpToNextLevel) / calculateXPForLevel(user.level + 1)) * 100))}%`
+                        : `${(user.xp % 100)}%`
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Achievement Badges */}
+      {getAchievementBadges().length > 0 && (
+        <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span className="text-4xl">🏆</span>
+            Achievement Badges
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {getAchievementBadges().map((badge, index) => (
+              <div key={index} className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl p-6 text-center transform hover:scale-105 transition-all duration-200">
+                <div className="text-4xl mb-3">{badge.icon}</div>
+                <h3 className="font-bold text-gray-900 text-lg mb-1">{badge.title}</h3>
+                <p className="text-gray-600 text-sm">{badge.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};
 const Chatbot: React.FC<{ onClose: () => void; }> = ({ onClose }) => { const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', parts: [{ text: "Hello! I'm LearnSphere Tutor." }] }]); const [input, setInput] = useState(''); const [isLoading, setIsLoading] = useState(false); const messagesEndRef = useRef<HTMLDivElement>(null); useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]); const handleSendMessage = async (e: React.FormEvent) => { e.preventDefault(); if (!input.trim() || isLoading) return; const userMessage: ChatMessage = { role: 'user', parts: [{ text: input }] }; setMessages(prev => [...prev, userMessage]); setInput(''); setIsLoading(true); try { const response = await axios.post<{ reply: string }>('http://localhost:5001/api/chat', { message: input, history: messages }); const modelMessage: ChatMessage = { role: 'model', parts: [{ text: response.data.reply }] }; setMessages(prev => [...prev, modelMessage]); } catch (error: any) { const serverErrorMessage = error.response?.data?.message || "Sorry, I'm having trouble connecting."; const errorMessage: ChatMessage = { role: 'model', parts: [{ text: serverErrorMessage }] }; setMessages(prev => [...prev, errorMessage]); } finally { setIsLoading(false); } }; return ( <div className="fixed bottom-24 right-5 w-96 h-[60vh] bg-gray-800 rounded-lg shadow-2xl flex flex-col z-50 border border-gray-700"><header className="bg-gray-900 p-3 flex justify-between items-center rounded-t-lg"><h3 className="text-lg font-bold text-white">AI Tutor</h3><button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none">&times;</button></header><div className="flex-1 p-4 overflow-y-auto">{messages.map((msg, index) => (<div key={index} className={`mb-3 p-3 rounded-lg max-w-[85%] ${msg.role === 'user' ? 'bg-indigo-600 ml-auto' : 'bg-gray-700'}`}><p className="text-white text-sm whitespace-pre-wrap">{msg.parts[0].text}</p></div>))}{isLoading && <div className="bg-gray-700 p-3 rounded-lg max-w-[85%]"><p className="text-white text-sm italic">Tutor is typing...</p></div>}<div ref={messagesEndRef} /></div><form onSubmit={handleSendMessage} className="p-3 border-t border-gray-700"><div className="flex items-center bg-gray-700 rounded-lg"><input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask a question..." className="w-full bg-transparent p-2 text-white focus:outline-none" disabled={isLoading} /><button type="submit" className="p-2 text-indigo-400 hover:text-indigo-300 rounded-lg m-1" disabled={isLoading}><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></button></div></form></div> ); };
 const SignInPage: React.FC = () => { return ( <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-center items-center"><div className="text-center p-8 bg-gray-800 rounded-lg shadow-xl"><h1 className="text-5xl font-bold text-white mb-3">Welcome to LearnSphere</h1><p className="text-gray-400 mb-8 text-lg">Your personal AI-powered learning platform.</p><div className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"><SignInButton /></div></div></div> ); };
 

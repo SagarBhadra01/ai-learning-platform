@@ -34,14 +34,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
 
   return (
     <>
-      {/* Overlay for mobile */}
-      {(isOpen || !isCollapsed) && (
+      {/* Mobile Backdrop */}
+      {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => {
-            setIsCollapsed(true);
-            onClose?.();
-          }}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
         />
       )}
       
@@ -110,30 +107,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
               </button>
             ))}
           </div>
-        </nav>
-
-        {/* Collapse Button - Desktop Only */}
-        <div className="hidden lg:block p-4 lg:p-6 border-t border-purple-500/20">
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="w-full flex items-center justify-center space-x-2 px-3 lg:px-4 py-2 lg:py-3 rounded-xl bg-purple-800/30 hover:bg-purple-700/40 text-purple-200 hover:text-white transition-all duration-200 border border-purple-500/30 hover:border-purple-400/50"
-          >
-            {!isCollapsed && <span className="text-sm font-medium">Collapse</span>}
-            <svg 
-              className={`w-4 h-4 transition-transform duration-200 ${
-                isCollapsed ? 'rotate-180' : ''
-              }`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        </div>
-        
+        </nav>      
       </div>
-
     </>
   );
 };
