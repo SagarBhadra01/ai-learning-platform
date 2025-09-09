@@ -1,0 +1,23 @@
+{
+  "name": "learning-platform-backend",
+  "version": "1.0.0",
+  "description": "Backend for the learning platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonrepair": "^3.13.0",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "nodemon": "^3.1.2"
+  }
+}
