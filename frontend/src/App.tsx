@@ -17,6 +17,7 @@ import type {
   GeminiResponse 
 } from './components';
 
+
 // --- Environment Variable Setup for Vite ---
 const FRONTEND_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -193,7 +194,40 @@ const LearnSphereApp: React.FC = () => {
     const [sidebarCollapsed] = useState(false);
     const [overallProgress, setOverallProgress] = useState(0);
 
-    useEffect(() => { if (isLoaded && clerkUser) { setUser(prev => ({ ...prev, name: clerkUser.fullName ?? 'New Learner', avatarUrl: clerkUser.imageUrl || '' })); } }, [isLoaded, clerkUser]);
+    // Load user XP data from backend when user is loaded
+    useEffect(() => {
+        if (isLoaded && clerkUser) {
+            setUser(prev => ({
+                ...prev,
+                name: clerkUser.fullName ?? 'New Learner',
+                avatarUrl: clerkUser.imageUrl || ''
+            }));
+            loadUserXP(clerkUser.id);
+        }
+    }, [isLoaded, clerkUser]);
+
+    // Function to load user XP data from backend
+    const loadUserXP = async (userId: string) => {
+        try {
+            const response = await axios.get(`http://localhost:5001/api/xp/${userId}`);
+            const xpData = response.data as {
+                totalXP: number;
+                currentLevel: number;
+                streak: { current: number; lastActivity?: Date };
+            };
+            
+            setUser(prev => ({
+                ...prev,
+                xp: xpData.totalXP,
+                level: xpData.currentLevel,
+                streak: xpData.streak.current,
+                lastCompletedDate: xpData.streak.lastActivity ? new Date(xpData.streak.lastActivity).toISOString().split('T')[0] : null
+            }));
+        } catch (error) {
+            console.error('Error loading user XP:', error);
+        }
+    };
+
 
     const getAiImageKeywords = useCallback(async (courseTitle: string): Promise<string> => {
         if (!FRONTEND_GEMINI_API_KEY) { console.error("Frontend Gemini API Key not found in .env file. Make sure it starts with VITE_"); return courseTitle; }
@@ -252,11 +286,51 @@ const LearnSphereApp: React.FC = () => {
     
     const handleStartLearning = useCallback((courseId: string) => { setActiveCourseId(courseId); setView('learn'); }, []);
     
-    const handleMarkLessonComplete = useCallback((courseId: string, chapterIndex: number, lessonIndex: number, xpGained: number, quizResult?: Omit<QuizResult, 'date'>) => {
-        setCourses(prevCourses => prevCourses.map(course => { if (course.id === courseId) { const newChapters = JSON.parse(JSON.stringify(course.chapters)); newChapters[chapterIndex].lessons[lessonIndex].completed = true; return { ...course, chapters: newChapters }; } return course; }));
-        if (quizResult) { setQuizProgress(null); }
-        setUser(prevUser => { const today = new Date(); const todayStr = today.toISOString().split('T')[0]; const lastDateStr = prevUser.lastCompletedDate; let newStreak = prevUser.streak; if (lastDateStr !== todayStr) { const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); const yesterdayStr = yesterday.toISOString().split('T')[0]; if (lastDateStr === yesterdayStr) { newStreak += 1; } else { newStreak = 1; } } const newXp = prevUser.xp + xpGained; const newQuizHistory = quizResult ? [...prevUser.quizHistory, { ...quizResult, date: new Date().toISOString() }] : prevUser.quizHistory; return { ...prevUser, xp: newXp, level: Math.floor(newXp / 100) + 1, streak: newStreak, lastCompletedDate: todayStr, quizHistory: newQuizHistory, }; });
-    }, []);
+    const handleMarkLessonComplete = useCallback(async (courseId: string, chapterIndex: number, lessonIndex: number, xpGained: number, quizResult?: Omit<QuizResult, 'date'>) => {
+        if (!clerkUser?.id) return;
+        
+        // Update course completion status
+        setCourses(prevCourses => prevCourses.map(course => {
+            if (course.id === courseId) {
+                const newChapters = JSON.parse(JSON.stringify(course.chapters));
+                newChapters[chapterIndex].lessons[lessonIndex].completed = true;
+                return { ...course, chapters: newChapters };
+            }
+            return course;
+        }));
+        
+        // Clear quiz progress if this was a quiz completion
+        if (quizResult) {
+            setQuizProgress(null);
+            
+            // Add XP for quiz completion via backend
+            await axios.post('http://localhost:5001/api/quiz/complete', {
+                userId: clerkUser.id,
+                quizId: `${courseId}_${chapterIndex}_${lessonIndex}`,
+                lessonId: `${courseId}_${chapterIndex}_${lessonIndex}`,
+                score: quizResult.correct,
+                totalQuestions: quizResult.total,
+                xpReward: 15
+            });
+            
+            // Update quiz history
+            setUser(prevUser => ({
+                ...prevUser,
+                quizHistory: [...prevUser.quizHistory, { ...quizResult, date: new Date().toISOString() }]
+            }));
+        } else {
+            // Add XP for lesson completion via backend
+            await axios.post('http://localhost:5001/api/lesson/complete', {
+                userId: clerkUser.id,
+                lessonId: `${courseId}_${chapterIndex}_${lessonIndex}`,
+                courseId: courseId,
+                xpReward: xpGained
+            });
+        }
+        
+        // Reload user XP data to get updated values
+        await loadUserXP(clerkUser.id);
+    }, [clerkUser?.id, loadUserXP]);
 
     const handleUpdateQuizProgress = useCallback((progress: QuizProgress) => { setQuizProgress(progress); }, []);
     const activeCourse = useMemo(() => courses.find(c => c.id === activeCourseId) || null, [courses, activeCourseId]);
