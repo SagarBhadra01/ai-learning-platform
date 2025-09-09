@@ -5,7 +5,8 @@ import {
   ModernDashboard, 
   Header, 
   Sidebar, 
-  ProgressBar
+  ProgressBar,
+  BookmarkedCourses
 } from './components';
 import type { 
   View, 
@@ -16,7 +17,8 @@ import type {
   QuizProgress, 
   GeminiResponse 
 } from './components';
-
+import { ThemeProvider } from './contexts/ThemeContext';
+import { BookmarkProvider } from './contexts/BookmarkContext';
 
 // --- Environment Variable Setup for Vite ---
 const FRONTEND_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -386,6 +388,7 @@ const LearnSphereApp: React.FC = () => {
     const renderContent = () => {
         switch (view) {
             case 'dashboard': return <ModernDashboard courses={courses} user={user} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} onDeleteCourse={handleDeleteCourse} isLoading={isLoading} error={fetchError} generatingImages={generatingImages}/>;
+            case 'bookmarks': return <BookmarkedCourses courses={courses} onStartLearning={handleStartLearning} onDeleteCourse={handleDeleteCourse} generatingImages={generatingImages} />;
             case 'generate': return <CourseGenerator onCourseCreated={handleAddCourse} />;
             case 'learn': if(activeCourse) { return <LearningView course={activeCourse} onMarkComplete={handleMarkLessonComplete} quizProgress={quizProgress} onUpdateQuizProgress={handleUpdateQuizProgress} />; } else { setView('dashboard'); return null; }
             case 'profile': return <Profile user={user} />;
@@ -394,7 +397,7 @@ const LearnSphereApp: React.FC = () => {
     };
     
     return (
-        <div className="relative min-h-screen bg-gray-900 text-gray-100 font-sans">
+        <div className="relative min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
             {/* Progress Bar */}
             <ProgressBar progress={overallProgress} />
             
@@ -427,10 +430,12 @@ const LearnSphereApp: React.FC = () => {
 };
 
 const App: React.FC = () => (
-    <>
-        <SignedOut><SignInPage /></SignedOut>
-        <SignedIn><LearnSphereApp /></SignedIn>
-    </>
+    <ThemeProvider>
+        <BookmarkProvider>
+            <SignedOut><SignInPage /></SignedOut>
+            <SignedIn><LearnSphereApp /></SignedIn>
+        </BookmarkProvider>
+    </ThemeProvider>
 );
 
 export default App;

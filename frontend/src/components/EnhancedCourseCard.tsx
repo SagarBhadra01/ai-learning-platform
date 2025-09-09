@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Course } from './types';
+import { BookmarkButton } from './BookmarkButton';
 
 interface EnhancedCourseCardProps {
   course: Course;
@@ -62,20 +63,23 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
   return (
     <div 
-      className="bg-gray-800 rounded-xl shadow-lg flex flex-col overflow-hidden relative transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-gray-700 hover:border-indigo-500 group"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg flex flex-col overflow-hidden relative transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Delete Button */}
-      {onDeleteCourse && (
-        <button
-          onClick={handleDeleteClick}
-          className="absolute top-2 right-2 z-20 bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors opacity-0 hover:opacity-100 group-hover:opacity-100"
-          title="Delete Course"
-        >
-          🗑️
-        </button>
-      )}
+      {/* Action Buttons */}
+      <div className="absolute top-2 right-2 z-20 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <BookmarkButton courseId={course.id} className="bg-white dark:bg-gray-800 shadow-lg" />
+        {onDeleteCourse && (
+          <button
+            onClick={handleDeleteClick}
+            className="bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            title="Delete Course"
+          >
+            🗑️
+          </button>
+        )}
+      </div>
 
       {/* Difficulty Badge */}
       <div className={`absolute top-4 right-4 text-xs font-semibold px-3 py-1 rounded-full z-10 flex items-center space-x-1 ${getLevelColor(course.level)}`}>
@@ -91,10 +95,10 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       )}
 
       {/* Image Container */}
-      <div className="relative w-full h-48 bg-gray-700 flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
         {isImageLoading ? (
-          <div className="w-full h-full bg-gray-600 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400">Loading...</div>
+          <div className="w-full h-full bg-gray-300 dark:bg-gray-600 animate-pulse flex items-center justify-center">
+            <div className="text-gray-500 dark:text-gray-400">Loading...</div>
           </div>
         ) : (
           <>
@@ -132,11 +136,11 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-bold text-white mb-2">{course.title}</h3>
-        <p className="text-gray-400 mb-4 flex-grow line-clamp-3">{course.description}</p>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{course.title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow line-clamp-3">{course.description}</p>
         
         {/* Course Stats */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
           <div className="flex items-center space-x-4">
             <span className="flex items-center space-x-1">
               <span>📚</span>
@@ -153,10 +157,10 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
         {progressPercentage > 0 && (
           <div className="mb-4">
             <div className="flex justify-between items-center mb-1">
-              <span className="text-xs text-gray-400">Progress</span>
-              <span className="text-xs text-gray-400">{completedLessons}/{totalLessons}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Progress</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{completedLessons}/{totalLessons}</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2">
               <div 
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
@@ -188,9 +192,9 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-30 rounded-xl">
-          <div className="bg-gray-800 p-6 rounded-lg border border-red-500 max-w-sm">
-            <h3 className="text-white font-bold text-lg mb-2">Delete Course?</h3>
-            <p className="text-gray-300 text-sm mb-4">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-red-500 max-w-sm">
+            <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-2">Delete Course?</h3>
+            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
               Are you sure you want to delete "{course.title}"? This action cannot be undone.
             </p>
             <div className="flex space-x-3">

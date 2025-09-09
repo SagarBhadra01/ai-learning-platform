@@ -12,6 +12,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+    { id: 'bookmarks', label: 'Bookmarks', icon: '📚' },
     { id: 'generate', label: 'Create Course', icon: '➕' },
     { id: 'profile', label: 'Profile', icon: '👤' },
   ];
@@ -27,18 +28,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
       )}
       
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-gray-800 border-r border-gray-700 z-40 transition-all duration-300 ${
+      <div className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             {!isCollapsed && (
-              <h1 className="text-xl font-bold text-white">LearnSphere</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">LearnSphere</h1>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-700 text-white transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors"
             >
               {isCollapsed ? '→' : '←'}
             </button>
@@ -47,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
 
         {/* User Info */}
         {!isCollapsed && (
-          <div className="p-4 border-b border-gray-700">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
               <img 
                 src={user.avatarUrl} 
@@ -55,15 +56,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
                 className="w-10 h-10 rounded-full border-2 border-indigo-500" 
               />
               <div>
-                <div className="font-semibold text-white text-sm">{user.name}</div>
-                <div className="text-xs text-gray-400">Level {user.level} • {user.xp} XP</div>
+                <div className="font-semibold text-gray-900 dark:text-white text-sm">{user.name}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Level {user.level} • {user.xp} XP</div>
               </div>
             </div>
             
             {/* Streak */}
-            <div className="mt-3 p-2 bg-gray-700 rounded-lg">
+            <div className="mt-3 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-300">Streak</span>
+                <span className="text-gray-600 dark:text-gray-300">Streak</span>
                 <span className="text-orange-400 font-bold">{user.streak} 🔥</span>
               </div>
             </div>
@@ -80,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
                   className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
                     currentView === item.id
                       ? 'bg-indigo-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <span className="text-lg">{item.icon}</span>
@@ -94,15 +95,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onNavigate, currentView 
         {/* Progress Summary */}
         {!isCollapsed && (
           <div className="absolute bottom-4 left-4 right-4">
-            <div className="p-3 bg-gray-700 rounded-lg">
-              <div className="text-sm text-gray-300 mb-2">Level Progress</div>
-              <div className="w-full bg-gray-600 rounded-full h-2">
+            <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+              <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Level Progress</div>
+              <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
                 <div 
                   className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(user.xp % 100)}%` }}
                 />
               </div>
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {user.xp % 100}/100 XP to Level {user.level + 1}
               </div>
             </div>
