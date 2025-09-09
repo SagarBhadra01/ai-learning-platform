@@ -7,6 +7,10 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ user, onCreateCourse }) => {
+  const calculateXPForLevel = (level: number) => {
+    return Math.floor(100 * Math.pow(1.5, level - 1));
+  };
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -104,13 +108,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ user, onCreateCourse }
         {/* Progress to next level */}
         <div className="mt-6 p-4 bg-black bg-opacity-20 rounded-xl">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-indigo-200 text-sm">Progress to Level {user.level + 1}</span>
-            <span className="text-white text-sm font-semibold">{user.xp % 100}/100 XP</span>
+            <span className="text-indigo-200 text-sm">Level {user.level} Progress</span>
+            <span className="text-white text-sm font-semibold">
+              {user.xpToNextLevel ? `${Math.max(0, (calculateXPForLevel(user.level + 1) - user.xpToNextLevel))}/${calculateXPForLevel(user.level + 1)}` : `${user.xp % 100}/100`} XP
+            </span>
           </div>
           <div className="w-full bg-indigo-800 rounded-full h-3">
             <div 
               className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(user.xp % 100)}%` }}
+              style={{ 
+                width: user.xpToNextLevel 
+                  ? `${Math.max(0, Math.min(100, ((calculateXPForLevel(user.level + 1) - user.xpToNextLevel) / calculateXPForLevel(user.level + 1)) * 100))}%`
+                  : `${(user.xp % 100)}%`
+              }}
             />
           </div>
         </div>

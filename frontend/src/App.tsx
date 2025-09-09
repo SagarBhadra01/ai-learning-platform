@@ -220,6 +220,7 @@ const LearnSphereApp: React.FC = () => {
             const xpData = response.data as {
                 totalXP: number;
                 currentLevel: number;
+                xpToNextLevel: number;
                 streak: { current: number; lastActivity?: Date };
             };
             
@@ -227,6 +228,7 @@ const LearnSphereApp: React.FC = () => {
                 ...prev,
                 xp: xpData.totalXP,
                 level: xpData.currentLevel,
+                xpToNextLevel: xpData.xpToNextLevel,
                 streak: xpData.streak.current,
                 lastCompletedDate: xpData.streak.lastActivity ? new Date(xpData.streak.lastActivity).toISOString().split('T')[0] : null
             }));
