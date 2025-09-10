@@ -63,7 +63,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
   return (
     <div 
-      className="bg-white rounded-xl shadow-lg flex flex-col overflow-hidden relative transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-gray-200 hover:border-indigo-500 group"
+      className="bg-white rounded-xl shadow-lg flex flex-col overflow-hidden relative transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-gray-200 hover:border-blue-500 group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -89,7 +89,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
       {/* Progress Badge (if started) */}
       {progressPercentage > 0 && (
-        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full z-10">
+        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full z-10">
           <span className="hidden sm:inline">{Math.round(progressPercentage)}% Complete</span>
           <span className="sm:hidden">{Math.round(progressPercentage)}%</span>
         </div>
@@ -124,7 +124,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
                   <div className="mt-2">
                     <div className="w-full bg-gray-600 rounded-full h-2">
                       <div 
-                        className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${progressPercentage}%` }}
                       />
                     </div>
@@ -165,7 +165,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
             </div>
             <div className="w-full bg-gray-300 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -177,8 +177,8 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
           onClick={() => onStartLearning(course.id)} 
           className={`w-full font-bold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 transform text-sm sm:text-base ${
             progressPercentage > 0
-              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
-              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              ? 'bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
           } ${isHovered ? 'scale-105' : 'scale-100'}`}
         >
           <span className="hidden sm:inline">{progressPercentage > 0 ? 'Continue Learning' : 'Start Learning'}</span>
@@ -190,7 +190,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       <div className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none ${
         isHovered ? 'opacity-100' : 'opacity-0'
       }`}>
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20 blur-xl" />
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-emerald-500 opacity-20 blur-xl" />
       </div>
 
       {/* Delete Confirmation Modal */}

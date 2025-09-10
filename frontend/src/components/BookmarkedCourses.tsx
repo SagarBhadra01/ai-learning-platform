@@ -26,10 +26,10 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
   if (bookmarkedCourseList.length === 0) {
     return (
       <div className="max-w-7xl mx-auto">
-        <div className="text-center bg-gradient-to-br from-gray-600 to-gray-800 p-12 rounded-2xl border border-gray-200">
+        <div className="text-center bg-gradient-to-br from-white to-gray-50 p-12 rounded-2xl border border-gray-200">
           <div className="text-6xl mb-6">📚</div>
-          <h3 className="text-3xl font-bold text-white mb-4">No Bookmarked Courses</h3>
-          <p className="text-white text-lg mb-8 max-w-md mx-auto">
+          <h3 className="text-3xl font-bold text-gray-800 mb-4">No Bookmarked Courses</h3>
+          <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
             You haven't bookmarked any courses yet. Start exploring and bookmark courses you want to save for later!
           </p>
         </div>
@@ -41,8 +41,8 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-2">Bookmarked Courses</h2>
-          <p className="text-white">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Bookmarked Courses</h2>
+          <p className="text-gray-600">
             Your saved courses ({bookmarkedCourseList.length} course{bookmarkedCourseList.length !== 1 ? 's' : ''})
           </p>
         </div>

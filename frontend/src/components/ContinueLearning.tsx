@@ -25,12 +25,12 @@ export const ContinueLearning: React.FC<ContinueLearningProps> = ({ courses, onC
     <div className="mb-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Continue Learning</h2>
-          <p className="text-gray-400">Pick up where you left off</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Continue Learning</h2>
+          <p className="text-gray-600">Pick up where you left off</p>
         </div>
-        <div className="flex items-center space-x-2 text-indigo-400">
+        <div className="flex items-center space-x-2 text-blue-600">
           <span className="text-sm font-medium">{inProgressCourses.length} in progress</span>
-          <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
         </div>
       </div>
 

@@ -43,7 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
       )}
       
       {/* Sidebar */}
-      <div className={`fixed left-0 top-16 h-full bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 border-r border-purple-500/30 z-40 transition-all duration-300 backdrop-blur-sm ${
+      <div className={`fixed left-0 top-16 h-full bg-gradient-to-b from-white via-blue-50 to-white border-r border-gray-200 z-40 transition-all duration-300 backdrop-blur-sm ${
         (isCollapsed && !isOpen) ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-64'
       }`}>
         {/* Mobile Close Button */}
@@ -65,11 +65,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
         
         {/* Brand */}
         {!isCollapsed && (
-          <div className="p-4 lg:p-6 border-b border-purple-500/20">
+          <div className="p-4 lg:p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div>
-                <div className="font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent text-base lg:text-lg">Navigation</div>
-                <div className="text-xs text-purple-300">Quick Access</div>
+                <div className="font-bold bg-gradient-to-r from-gray-800 via-blue-700 to-gray-800 bg-clip-text text-transparent text-base lg:text-lg">Navigation</div>
+                <div className="text-xs text-gray-600">Quick Access</div>
               </div>
             </div>
           </div>
@@ -89,8 +89,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
                 }}
                 className={`w-full flex items-center space-x-3 px-3 lg:px-4 py-2 lg:py-3 rounded-xl transition-all duration-200 group ${
                   currentView === item.id
-                    ? 'bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 text-white shadow-lg'
-                    : 'text-purple-200 hover:text-white hover:bg-purple-800/30 border border-transparent hover:border-purple-500/30'
+                    ? 'bg-gradient-to-r from-blue-100 to-blue-200 border border-blue-300 text-blue-800 shadow-lg'
+                    : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50 border border-transparent hover:border-blue-200'
                 }`}
               >
                 <div className={`flex-shrink-0 transition-transform duration-200 ${
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
                   <span className="font-medium text-sm truncate">{item.label}</span>
                 )}
                 {(!isCollapsed || isOpen) && currentView === item.id && (
-                  <div className="ml-auto w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                  <div className="ml-auto w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
                 )}
               </button>
             ))}

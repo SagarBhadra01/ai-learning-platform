@@ -70,16 +70,16 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
         }
     };
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Header Section */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full mb-6 shadow-2xl">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full mb-6 shadow-2xl">
                         <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                     </div>
-                    <h1 className="text-6xl font-extrabold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                    <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent mb-4">
                         AI Course Creator
                     </h1>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -91,12 +91,12 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                 <div className="grid lg:grid-cols-5 gap-8 items-start">
                     {/* Form Section */}
                     <div className="lg:col-span-3">
-                        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 p-8">
                             <div className="space-y-8">
                                 {/* Course Topic */}
                                 <div className="space-y-4">
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
                                             <span className="text-white font-bold text-sm">1</span>
                                         </div>
                                         <h3 className="text-2xl font-bold text-gray-900">What do you want to learn?</h3>
@@ -107,11 +107,11 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                             value={topic} 
                                             onChange={(e) => setTopic(e.target.value)} 
                                             placeholder="Enter your topic (e.g., Machine Learning, Web Development, Digital Marketing)" 
-                                            className="w-full px-6 py-5 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-violet-500 focus:bg-white transition-all duration-300 text-lg group-hover:border-gray-300"
+                                            className="w-full px-6 py-5 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 text-lg group-hover:border-gray-300"
                                             disabled={isLoading}
                                         />
                                         <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-                                            <svg className="w-6 h-6 text-gray-400 group-hover:text-violet-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-6 h-6 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
                                         </div>
@@ -121,7 +121,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                 {/* Difficulty Level */}
                                 <div className="space-y-4">
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center">
                                             <span className="text-white font-bold text-sm">2</span>
                                         </div>
                                         <h3 className="text-2xl font-bold text-gray-900">Choose your level</h3>
@@ -135,8 +135,8 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                                 disabled={isLoading}
                                                 className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-105 ${
                                                     level === levelOption
-                                                        ? 'border-violet-500 bg-gradient-to-br from-violet-50 to-purple-50 shadow-lg'
-                                                        : 'border-gray-200 bg-white hover:border-violet-300 hover:shadow-md'
+                                                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg'
+                                                        : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
                                                 } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
                                             >
                                                 <div className="text-center space-y-3">
@@ -148,12 +148,12 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                                         {levelOption === 'Advanced' && '⚡'}
                                                     </div>
                                                     <div className={`font-bold text-lg ${
-                                                        level === levelOption ? 'text-violet-700' : 'text-gray-700'
+                                                        level === levelOption ? 'text-blue-700' : 'text-gray-700'
                                                     }`}>
                                                         {levelOption}
                                                     </div>
                                                     <div className={`text-sm ${
-                                                        level === levelOption ? 'text-violet-600' : 'text-gray-500'
+                                                        level === levelOption ? 'text-blue-600' : 'text-gray-500'
                                                     }`}>
                                                         {levelOption === 'Beginner' && 'Perfect for newcomers'}
                                                         {levelOption === 'Intermediate' && 'Some experience required'}
@@ -161,7 +161,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                                     </div>
                                                 </div>
                                                 {level === levelOption && (
-                                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center">
+                                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                                                         <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
@@ -175,7 +175,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                 {/* Generate Button */}
                                 <div className="space-y-4">
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg flex items-center justify-center">
                                             <span className="text-white font-bold text-sm">3</span>
                                         </div>
                                         <h3 className="text-2xl font-bold text-gray-900">Generate your course</h3>
@@ -183,7 +183,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                     <button 
                                         onClick={handleGenerate} 
                                         disabled={isLoading || !topic.trim()} 
-                                        className="w-full bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:via-purple-700 hover:to-indigo-700 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-xl relative overflow-hidden group"
+                                        className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 hover:from-blue-700 hover:via-blue-800 hover:to-blue-900 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-xl relative overflow-hidden group"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                                         <div className="relative z-10">
@@ -226,7 +226,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
 
                     {/* Features Section */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+                        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
                             <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                                 <span className="text-3xl mr-3">✨</span>
                                 AI-Powered Features
@@ -238,7 +238,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                                     { icon: '⭐', title: 'Progress Tracking', desc: 'Monitor your advancement' },
                                     { icon: '🧠', title: 'Smart Content', desc: 'AI-generated explanations' }
                                 ].map((feature, index) => (
-                                    <div key={index} className="flex items-start space-x-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-purple-50 transition-all duration-300">
+                                    <div key={index} className="flex items-start space-x-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-emerald-50 transition-all duration-300">
                                         <div className="text-2xl">{feature.icon}</div>
                                         <div>
                                             <h4 className="font-semibold text-gray-900">{feature.title}</h4>
@@ -249,7 +249,7 @@ const CourseGenerator: React.FC<{ onCourseCreated: (course: Course) => void; }> 
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-violet-100 to-purple-100 rounded-3xl p-8 text-center">
+                        <div className="bg-gradient-to-br from-blue-100 to-emerald-100 rounded-3xl p-8 text-center">
                             <div className="text-6xl mb-4">🎓</div>
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Ready to Learn?</h3>
                             <p className="text-gray-600 text-sm">
@@ -298,63 +298,225 @@ const LearningView: React.FC<{ course: Course; onMarkComplete: (courseId: string
     };
 
     return (
-        <div className="flex gap-8">
-            <aside className="w-1/4 bg-gray-800 p-4 rounded-lg h-fit sticky top-24">
-                <h3 className="text-xl font-bold text-white mb-4">{course.title}</h3>
-                {course.chapters.map((chap, chapIdx) => (<div key={chapIdx} className="mb-4"><h4 className="font-semibold text-gray-300">{chap.title}</h4><ul>{chap.lessons.map((less, lessIdx) => (<li key={lessIdx} className={`p-2 rounded-md cursor-pointer ${activeLesson?.chap === chapIdx && activeLesson?.less === lessIdx ? 'bg-indigo-600' : ''} ${less.completed ? 'text-gray-500 line-through' : 'text-white'}`} onClick={() => setActiveLesson({ chap: chapIdx, less: lessIdx })}>{less.title} {less.completed && '✓'}</li>))}</ul></div>))}
-            </aside>
-            <main className="w-3/4 p-8 bg-gray-800 rounded-lg">
-                {currentLesson ? (<div>
-                    <h2 className="text-3xl font-bold text-white mb-4">{currentLesson.title}</h2>
-                    <div className="prose prose-invert max-w-none text-gray-300 mb-6" dangerouslySetInnerHTML={{ __html: currentLesson.content }}></div>
-                    
-                    {currentLesson.quiz && !currentLesson.completed && (
-                        <div className="bg-gray-700 p-6 rounded-lg mt-6">
-                            <h3 className="text-2xl font-bold text-white mb-4">{currentLesson.quiz.title}</h3>
-                            {currentLesson.quiz.questions.map((q, qIdx) => {
-                                const userAnswer = quizProgress?.answers?.[qIdx];
-                                return (
-                                    <div key={qIdx} className="mb-6">
-                                        <p className="text-white mb-3 font-semibold">{qIdx + 1}. {q.question}</p>
-                                        <div className="flex flex-col space-y-2">
-                                            {q.options.map(opt => {
-                                                const isCorrect = q.correctAnswer === opt;
-                                                const isSelected = userAnswer === opt;
-                                                let optionClass = "flex items-center space-x-3 p-3 rounded-md border border-transparent transition-colors ";
-                                                if (isQuizSubmitted) {
-                                                    if (isCorrect) { optionClass += 'bg-green-800 bg-opacity-50 border-green-500 text-green-200'; } 
-                                                    else if (isSelected && !isCorrect) { optionClass += 'bg-red-800 bg-opacity-50 border-red-500 text-red-200'; } 
-                                                    else { optionClass += 'bg-gray-600 text-gray-300'; }
-                                                } else {
-                                                    optionClass += 'bg-gray-600 cursor-pointer hover:bg-gray-500';
-                                                }
-                                                return (
-                                                    <label key={opt} className={optionClass}>
-                                                        <input type="radio" name={`q_${qIdx}`} value={opt} onChange={() => handleQuizAnswer(qIdx, opt)} disabled={isQuizSubmitted} checked={isSelected} className="form-radio h-4 w-4 text-indigo-500 bg-gray-800 border-gray-600 focus:ring-indigo-500 disabled:opacity-50" />
-                                                        <span>{opt}</span>
-                                                    </label>
-                                                );
-                                            })}
+        <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
+            {/* Sidebar Navigation */}
+            <aside className="lg:w-1/4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-4 lg:p-6 h-fit lg:sticky lg:top-24 shadow-md">
+                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    {course.title}
+                </h3>
+                <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-2">
+                    {course.chapters.map((chap, chapIdx) => (
+                        <div key={chapIdx} className="mb-4">
+                            <h4 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                                <span className="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full text-xs">{chapIdx + 1}</span>
+                                {chap.title}
+                            </h4>
+                            <ul className="space-y-1 pl-7">
+                                {chap.lessons.map((less, lessIdx) => (
+                                    <li 
+                                        key={lessIdx} 
+                                        className={`p-2 rounded-md cursor-pointer transition-all duration-200 ${
+                                            activeLesson?.chap === chapIdx && activeLesson?.less === lessIdx 
+                                                ? 'bg-blue-50 text-blue-700 font-medium shadow-sm border border-blue-100' 
+                                                : 'text-gray-600 hover:bg-gray-50'
+                                        } ${less.completed ? 'text-green-600' : ''}`} 
+                                        onClick={() => setActiveLesson({ chap: chapIdx, less: lessIdx })}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span>{less.title}</span>
+                                            {less.completed && (
+                                                <span className="text-green-500">
+                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                    </svg>
+                                                </span>
+                                            )}
                                         </div>
-                                    </div>
-                                );
-                            })}
-                            {!isQuizSubmitted ? (
-                                <button onClick={handleSubmitQuiz} className="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Submit Quiz</button>
-                            ) : (
-                                <div className="mt-4 p-4 bg-gray-800 rounded-lg text-center">
-                                    <h4 className="text-xl font-bold text-white">Quiz Complete!</h4>
-                                    <p className="text-lg text-gray-300 my-2">Your Score: <span className="font-bold text-indigo-400">{quizResult?.score}%</span> ({quizResult?.correct}/{quizResult?.total})</p>
-                                    <button onClick={handleContinue} className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg">Continue</button>
-                                </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex-1 bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-md border border-gray-200">
+                {currentLesson ? (
+                    <div className="max-w-4xl mx-auto">
+                        <div className="mb-6 pb-6 border-b border-gray-100">
+                            <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                                <span>Chapter {activeLesson!.chap + 1}</span>
+                                <span>•</span>
+                                <span>Lesson {activeLesson!.less + 1}</span>
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">{currentLesson.title}</h2>
+                            {currentLesson.completed && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    Completed
+                                </span>
                             )}
                         </div>
-                    )}
-                    {!currentLesson.completed && !currentLesson.quiz && activeLesson && (
-                        <button onClick={() => onMarkComplete(course.id, activeLesson.chap, activeLesson.less, currentLesson.xp)} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Mark as Complete</button>
-                    )}
-                    {currentLesson.completed && (<p className="text-green-400 font-semibold text-lg flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> Lesson Completed!</p>)}
-                </div>) : <p className="text-white">Select a lesson to start.</p>}
+
+                        {/* Lesson Content */}
+                        <div 
+                            className="prose prose-blue max-w-none text-gray-700 mb-8" 
+                            dangerouslySetInnerHTML={{ __html: currentLesson.content }}
+                        ></div>
+                        
+                        {/* Quiz Section */}
+                        {currentLesson.quiz && !currentLesson.completed && (
+                            <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-6 sm:p-8 mt-12">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="bg-blue-100 p-2 rounded-lg">
+                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">{currentLesson.quiz.title}</h3>
+                                </div>
+                                
+                                <div className="space-y-8">
+                                    {currentLesson.quiz.questions.map((q, qIdx) => {
+                                        const userAnswer = quizProgress?.answers?.[qIdx];
+                                        return (
+                                            <div key={qIdx} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                                                <p className="font-medium text-gray-800 mb-4">
+                                                    <span className="text-blue-600 font-semibold">Question {qIdx + 1}.</span> {q.question}
+                                                </p>
+                                                <div className="space-y-3">
+                                                    {q.options.map(opt => {
+                                                        const isCorrect = q.correctAnswer === opt;
+                                                        const isSelected = userAnswer === opt;
+                                                        let optionClass = "flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer ";
+                                                        
+                                                        if (isQuizSubmitted) {
+                                                            if (isCorrect) { 
+                                                                optionClass += 'bg-green-50 border-green-200 text-green-800';
+                                                            } else if (isSelected && !isCorrect) { 
+                                                                optionClass += 'bg-red-50 border-red-200 text-red-800';
+                                                            } else { 
+                                                                optionClass += 'bg-white border-gray-200 text-gray-600';
+                                                            }
+                                                        } else {
+                                                            optionClass += 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50 text-gray-700';
+                                                        }
+
+                                                        return (
+                                                            <label key={opt} className={optionClass}>
+                                                                <input 
+                                                                    type="radio" 
+                                                                    name={`q_${qIdx}`} 
+                                                                    value={opt} 
+                                                                    onChange={() => handleQuizAnswer(qIdx, opt)} 
+                                                                    disabled={isQuizSubmitted} 
+                                                                    checked={isSelected} 
+                                                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" 
+                                                                />
+                                                                <span className="flex-1">{opt}</span>
+                                                                {isQuizSubmitted && isCorrect && (
+                                                                    <span className="text-green-500">
+                                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                                        </svg>
+                                                                    </span>
+                                                                )}
+                                                                {isQuizSubmitted && isSelected && !isCorrect && (
+                                                                    <span className="text-red-500">
+                                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                                        </svg>
+                                                                    </span>
+                                                                )}
+                                                            </label>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+
+                                    {/* Quiz Actions */}
+                                    <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                                        {!isQuizSubmitted ? (
+                                            <button 
+                                                onClick={handleSubmitQuiz} 
+                                                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors flex-1 sm:flex-none sm:w-auto"
+                                            >
+                                                Submit Quiz
+                                            </button>
+                                        ) : (
+                                            <div className="w-full bg-white border border-green-100 rounded-xl p-6 text-center">
+                                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 text-green-500 mb-4">
+                                                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                                <h4 className="text-xl font-bold text-gray-900 mb-1">Quiz Complete!</h4>
+                                                <p className="text-gray-600 mb-6">
+                                                    You scored <span className="font-bold text-blue-600">{quizResult?.score}%</span> 
+                                                    ({quizResult?.correct} out of {quizResult?.total} correct)
+                                                </p>
+                                                <button 
+                                                    onClick={handleContinue} 
+                                                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto"
+                                                >
+                                                    Continue Learning
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Mark Complete Button (for non-quiz lessons) */}
+                        {!currentLesson.completed && !currentLesson.quiz && activeLesson && (
+                            <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end">
+                                <button 
+                                    onClick={() => onMarkComplete(course.id, activeLesson.chap, activeLesson.less, currentLesson.xp)} 
+                                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Mark as Complete
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Completion Badge */}
+                        {currentLesson.completed && (
+                            <div className="mt-8 p-4 bg-green-50 border border-green-100 rounded-xl flex items-center gap-3">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium text-green-800">Lesson Completed!</h4>
+                                    <p className="text-sm text-green-600">Great job! You've earned {currentLesson.xp} XP.</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mb-4">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-1">Select a lesson to begin</h3>
+                        <p className="text-gray-500">Choose a lesson from the sidebar to start learning</p>
+                    </div>
+                )}
             </main>
         </div>
     );
@@ -378,62 +540,62 @@ const Profile: React.FC<{ user: User }> = ({ user }) => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Profile Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-3xl p-8 shadow-2xl">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 shadow-2xl">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-2000"></div>
         </div>
 
         <div className="relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-8">
             {/* Avatar Section */}
             <div className="relative">
-              <div className="w-40 h-40 bg-gradient-to-br from-purple-400 via-pink-500 to-cyan-500 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
-                <div className="w-36 h-36 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center">
+                <div className="w-40 h-40 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white/20">
+                <div className="w-36 h-36 bg-gradient-to-br from-blue-700 to-blue-800 rounded-full flex items-center justify-center overflow-hidden">
                   <img 
                     src={user.avatarUrl} 
                     alt={user.name}
-                    className="w-32 h-32 rounded-full border-4 border-white/20 shadow-xl object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
               </div>
               
               {/* Level Badge */}
-              <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-xl animate-bounce">
+              <div className="absolute -top-2 -right-2 w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-xl animate-bounce border-4 border-white/90">
                 {user.level}
               </div>
             </div>
 
             {/* User Info */}
             <div className="flex-1 text-center lg:text-left">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-lg">
                 {user.name}
               </h1>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-4">
-                  <div className="text-2xl mb-1">⭐</div>
-                  <div className="text-white font-bold text-lg">Level {user.level}</div>
-                  <div className="text-yellow-200 text-sm">{user.xp.toLocaleString()} XP</div>
+                <div className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-shadow">
+                  <div className="text-2xl mb-1 text-yellow-500">⭐</div>
+                  <div className="text-blue-900 font-bold text-lg">Level {user.level}</div>
+                  <div className="text-blue-700 text-sm font-medium">{user.xp.toLocaleString()} XP</div>
                 </div>
-                <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 backdrop-blur-sm border border-orange-500/30 rounded-2xl p-4">
-                  <div className="text-2xl mb-1">🔥</div>
-                  <div className="text-white font-bold text-lg">{user.streak} Days</div>
-                  <div className="text-orange-200 text-sm">Current Streak</div>
+                <div className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-shadow">
+                  <div className="text-2xl mb-1 text-orange-500">🔥</div>
+                  <div className="text-blue-900 font-bold text-lg">{user.streak} Days</div>
+                  <div className="text-blue-700 text-sm font-medium">Current Streak</div>
                 </div>
               </div>
 
               {/* Progress Bar */}
-              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+              <div className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-2xl p-4 shadow-inner">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-purple-200 font-medium">Level {user.level} Progress</span>
-                  <span className="text-white font-bold bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 rounded-full text-sm">
+                  <span className="text-blue-900 font-medium">Level {user.level} Progress</span>
+                  <span className="text-white font-bold bg-gradient-to-r from-blue-500 to-blue-600 px-3 py-1 rounded-full text-sm shadow-md">
                     {user.xpToNextLevel ? `${Math.max(0, (calculateXPForLevel(user.level + 1) - user.xpToNextLevel))}/${calculateXPForLevel(user.level + 1)}` : `${user.xp % 100}/100`} XP
                   </span>
                 </div>
-                <div className="w-full bg-slate-700/50 rounded-full h-4 overflow-hidden">
+                <div className="w-full bg-blue-100/80 rounded-full h-3 overflow-hidden">
                   <div 
-                    className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 h-4 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                    className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden shadow-inner"
                     style={{ 
                       width: user.xpToNextLevel 
                         ? `${Math.max(0, Math.min(100, ((calculateXPForLevel(user.level + 1) - user.xpToNextLevel) / calculateXPForLevel(user.level + 1)) * 100))}%`
@@ -471,8 +633,154 @@ const Profile: React.FC<{ user: User }> = ({ user }) => {
     </div>
   );
 };
-const Chatbot: React.FC<{ onClose: () => void; }> = ({ onClose }) => { const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', parts: [{ text: "Hello! I'm LearnSphere Tutor." }] }]); const [input, setInput] = useState(''); const [isLoading, setIsLoading] = useState(false); const messagesEndRef = useRef<HTMLDivElement>(null); useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]); const handleSendMessage = async (e: React.FormEvent) => { e.preventDefault(); if (!input.trim() || isLoading) return; const userMessage: ChatMessage = { role: 'user', parts: [{ text: input }] }; setMessages(prev => [...prev, userMessage]); setInput(''); setIsLoading(true); try { const response = await axios.post<{ reply: string }>('http://localhost:5001/api/chat', { message: input, history: messages }); const modelMessage: ChatMessage = { role: 'model', parts: [{ text: response.data.reply }] }; setMessages(prev => [...prev, modelMessage]); } catch (error: any) { const serverErrorMessage = error.response?.data?.message || "Sorry, I'm having trouble connecting."; const errorMessage: ChatMessage = { role: 'model', parts: [{ text: serverErrorMessage }] }; setMessages(prev => [...prev, errorMessage]); } finally { setIsLoading(false); } }; return ( <div className="fixed bottom-24 right-5 w-96 h-[60vh] bg-gray-800 rounded-lg shadow-2xl flex flex-col z-50 border border-gray-700"><header className="bg-gray-900 p-3 flex justify-between items-center rounded-t-lg"><h3 className="text-lg font-bold text-white">AI Tutor</h3><button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none">&times;</button></header><div className="flex-1 p-4 overflow-y-auto">{messages.map((msg, index) => (<div key={index} className={`mb-3 p-3 rounded-lg max-w-[85%] ${msg.role === 'user' ? 'bg-indigo-600 ml-auto' : 'bg-gray-700'}`}><p className="text-white text-sm whitespace-pre-wrap">{msg.parts[0].text}</p></div>))}{isLoading && <div className="bg-gray-700 p-3 rounded-lg max-w-[85%]"><p className="text-white text-sm italic">Tutor is typing...</p></div>}<div ref={messagesEndRef} /></div><form onSubmit={handleSendMessage} className="p-3 border-t border-gray-700"><div className="flex items-center bg-gray-700 rounded-lg"><input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask a question..." className="w-full bg-transparent p-2 text-white focus:outline-none" disabled={isLoading} /><button type="submit" className="p-2 text-indigo-400 hover:text-indigo-300 rounded-lg m-1" disabled={isLoading}><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></button></div></form></div> ); };
-const SignInPage: React.FC = () => { return ( <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-center items-center"><div className="text-center p-8 bg-gray-800 rounded-lg shadow-xl"><h1 className="text-5xl font-bold text-white mb-3">Welcome to LearnSphere</h1><p className="text-gray-400 mb-8 text-lg">Your personal AI-powered learning platform.</p><div className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"><SignInButton /></div></div></div> ); };
+const Chatbot: React.FC<{ onClose: () => void; }> = ({ onClose }) => { 
+  const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', parts: [{ text: "Hello! I'm LearnSphere Tutor." }] }]); 
+  const [input, setInput] = useState(''); 
+  const [isLoading, setIsLoading] = useState(false); 
+  const messagesEndRef = useRef<HTMLDivElement>(null); 
+  
+  useEffect(() => { 
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
+  }, [messages]); 
+  
+  const handleSendMessage = async (e: React.FormEvent) => { 
+    e.preventDefault(); 
+    if (!input.trim() || isLoading) return; 
+    
+    const userMessage: ChatMessage = { role: 'user', parts: [{ text: input }] }; 
+    setMessages(prev => [...prev, userMessage]); 
+    setInput(''); 
+    setIsLoading(true); 
+    
+    try { 
+      const response = await axios.post<{ reply: string }>('http://localhost:5001/api/chat', { 
+        message: input, 
+        history: messages 
+      }); 
+      const modelMessage: ChatMessage = { 
+        role: 'model', 
+        parts: [{ text: response.data.reply }] 
+      }; 
+      setMessages(prev => [...prev, modelMessage]); 
+    } catch (error: any) { 
+      const serverErrorMessage = error.response?.data?.message || "Sorry, I'm having trouble connecting."; 
+      const errorMessage: ChatMessage = { 
+        role: 'model', 
+        parts: [{ text: serverErrorMessage }] 
+      }; 
+      setMessages(prev => [...prev, errorMessage]); 
+    } finally { 
+      setIsLoading(false); 
+    } 
+  }; 
+  
+  return ( 
+    <div className="fixed bottom-24 right-5 w-96 h-[60vh] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-700 p-3 flex justify-between items-center rounded-t-lg">
+        <h3 className="text-lg font-bold text-white">AI Tutor</h3>
+        <button 
+          onClick={onClose} 
+          className="text-white hover:text-gray-200 text-2xl leading-none"
+        >
+          &times;
+        </button>
+      </header>
+      
+      <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+        {messages.map((msg, index) => (
+          <div 
+            key={index} 
+            className={`mb-3 p-3 rounded-lg max-w-[85%] ${
+              msg.role === 'user' 
+                ? 'bg-blue-600 text-white ml-auto' 
+                : 'bg-white border border-gray-200 shadow-sm'
+            }`}
+          >
+            <p className="text-sm whitespace-pre-wrap">
+              {msg.parts[0].text}
+            </p>
+          </div>
+        ))}
+        
+        {isLoading && (
+          <div className="bg-white p-3 rounded-lg max-w-[85%] border border-gray-200 shadow-sm">
+            <p className="text-gray-600 text-sm italic">Tutor is typing...</p>
+          </div>
+        )}
+        
+        <div ref={messagesEndRef} />
+      </div>
+      
+      <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-200 bg-white">
+        <div className="flex items-center bg-gray-100 rounded-lg border border-gray-200">
+          <input 
+            type="text" 
+            value={input} 
+            onChange={(e) => setInput(e.target.value)} 
+            placeholder="Ask a question..." 
+            className="w-full bg-transparent p-2 text-gray-800 focus:outline-none" 
+            disabled={isLoading} 
+          />
+          <button 
+            type="submit" 
+            className="p-2 text-blue-600 hover:text-blue-700 rounded-lg m-1" 
+            disabled={isLoading}
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-6 w-6 rotate-90" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  ); 
+};
+const SignInPage: React.FC = () => { 
+  return ( 
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 text-white flex flex-col justify-center items-center p-4">
+      <div className="text-center p-8 bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl max-w-md w-full mx-4">
+        <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg 
+            className="w-14 h-14 text-white" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={1.5} 
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" 
+            />
+          </svg>
+        </div>
+        
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          Welcome to LearnSphere
+        </h1>
+        
+        <p className="text-blue-100 mb-8 text-lg">
+          Your personal AI-powered learning platform.
+        </p>
+        
+        <div className="inline-block bg-white hover:bg-gray-100 text-blue-700 font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <SignInButton />
+        </div>
+      </div>
+    </div>
+  ); 
+};
 
 const LearnSphereApp: React.FC = () => {
     const { user: clerkUser, isLoaded } = useUser();
@@ -693,11 +1001,11 @@ const LearnSphereApp: React.FC = () => {
     };
     
     return (
-        <div className="relative min-h-screen bg-gray-100 text-gray-900 font-sans">
+        <div className="relative min-h-screen bg-white text-gray-800 font-sans">
             {/* Progress Bar */}
             <ProgressBar progress={overallProgress} />
             
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+            <div className="min-h-screen bg-gradient-to-br from-blue-200 to-blue-50">
                 <Header user={user} onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
                 <Sidebar 
                   currentView={view} 
