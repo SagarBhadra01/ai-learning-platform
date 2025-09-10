@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({ user, onMenuToggle }) => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-gray-800 via-blue-700 to-gray-800 bg-clip-text text-transparent leading-tight">
-                AI LearnSphere
+                LearnSphere
               </h1>
               <p className="text-xs text-gray-600 font-medium hidden md:block">
                 Next-Gen Learning Platform
