@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Sprout, Rocket, Zap, BookOpen, Target, Trash2 } from 'lucide-react';
 import type { Course } from './types';
 import { BookmarkButton } from './BookmarkButton';
 
@@ -47,10 +48,10 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
   const getLevelIcon = (level: Course['level']) => {
     switch (level) {
-      case 'Beginner': return '🌱';
-      case 'Intermediate': return '🚀';
-      case 'Advanced': return '⚡';
-      default: return '📚';
+      case 'Beginner': return Sprout;
+      case 'Intermediate': return Rocket;
+      case 'Advanced': return Zap;
+      default: return BookOpen;
     }
   };
 
@@ -68,7 +69,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Action Buttons */}
-      <div className="absolute top-2 right-2 z-20 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-2 left-2 z-20 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <BookmarkButton courseId={course.id} className="bg-white shadow-lg" />
         {onDeleteCourse && (
           <button
@@ -76,14 +77,14 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
             className="bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
             title="Delete Course"
           >
-            🗑️
+            <Trash2 className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {/* Difficulty Badge */}
       <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 text-xs font-semibold px-2 py-1 sm:px-3 sm:py-1 rounded-full z-10 flex items-center space-x-1 ${getLevelColor(course.level)}`}>
-        <span>{getLevelIcon(course.level)}</span>
+        {React.createElement(getLevelIcon(course.level), { className: "w-3 h-3" })}
         <span>{course.level}</span>
       </div>
 
@@ -145,12 +146,12 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
         <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
           <div className="flex items-center space-x-2 sm:space-x-4">
             <span className="flex items-center space-x-1">
-              <span>📚</span>
+              <BookOpen className="w-4 h-4" />
               <span className="hidden sm:inline">{course.chapters.length} chapters</span>
               <span className="sm:hidden">{course.chapters.length} ch</span>
             </span>
             <span className="flex items-center space-x-1">
-              <span>🎯</span>
+              <Target className="w-4 h-4" />
               <span>{totalLessons} lessons</span>
             </span>
           </div>

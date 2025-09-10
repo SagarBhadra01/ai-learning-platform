@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookOpen, Star } from 'lucide-react';
 import type { Course } from './types';
 import { useBookmarks } from '../contexts/BookmarkContext';
 import { EnhancedCourseCard } from './EnhancedCourseCard';
@@ -27,7 +28,7 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
     return (
       <div className="max-w-7xl mx-auto">
         <div className="text-center bg-gradient-to-br from-white to-gray-50 p-12 rounded-2xl border border-gray-200">
-          <div className="text-6xl mb-6">📚</div>
+          <BookOpen className="w-16 h-16 mx-auto mb-6 text-gray-400" />
           <h3 className="text-3xl font-bold text-gray-800 mb-4">No Bookmarked Courses</h3>
           <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
             You haven't bookmarked any courses yet. Start exploring and bookmark courses you want to save for later!
@@ -47,7 +48,7 @@ export const BookmarkedCourses: React.FC<BookmarkedCoursesProps> = ({
           </p>
         </div>
         <div className="flex items-center space-x-2 bg-yellow-100 px-4 py-2 rounded-full">
-          <span className="text-yellow-600">⭐</span>
+          <Star className="w-4 h-4 text-yellow-600" />
           <span className="text-yellow-700 text-sm font-medium">
             {bookmarkedCourseList.length} bookmarked
           </span>

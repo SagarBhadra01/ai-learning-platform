@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CheckCircle, Rocket } from 'lucide-react';
 import type { Course, User } from './types';
 import { HeroSection } from './HeroSection';
 import { ContinueLearning } from './ContinueLearning';
@@ -163,7 +164,10 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
                   </div>
                   <div className="flex-1">
                     <h3 className="text-gray-800 font-bold text-sm group-hover:text-emerald-600 transition-colors">{course.title}</h3>
-                    <span className="text-emerald-600 text-xs font-medium">✓ Completed</span>
+                    <div className="flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3 text-emerald-600" />
+                      <span className="text-emerald-600 text-xs font-medium">Completed</span>
+                    </div>
                   </div>
                 </div>
                 <button
@@ -182,7 +186,7 @@ export const ModernDashboard: React.FC<ModernDashboardProps> = ({
       {courses.length === 0 && !isLoading && (
         <div className={`text-center bg-gradient-to-br from-white via-blue-50 to-white backdrop-blur-sm border border-gray-200 p-16 rounded-3xl shadow-2xl transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <div className="relative mb-8">
-            <div className="text-8xl animate-bounce">🚀</div>
+            <Rocket className="w-20 h-20 mx-auto animate-bounce text-blue-500" />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-emerald-500/20 rounded-full blur-xl"></div>
           </div>
           <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-800 via-blue-700 to-gray-800 bg-clip-text text-transparent mb-4 sm:mb-6">Welcome to AI LearnSphere!</h3>

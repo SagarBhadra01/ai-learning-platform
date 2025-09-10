@@ -1,4 +1,5 @@
 import React from 'react';
+import { Star, Flame, Trophy, Target, Crown, Zap } from 'lucide-react';
 import type { User } from './index';
 
 interface ProfileProps {
@@ -12,11 +13,11 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
 
   const getAchievementBadges = () => {
     const badges = [];
-    if (user.streak >= 7) badges.push({ icon: '🔥', title: 'Week Warrior', desc: '7+ day streak' });
-    if (user.streak >= 30) badges.push({ icon: '💪', title: 'Month Master', desc: '30+ day streak' });
-    if (user.level >= 5) badges.push({ icon: '⭐', title: 'Rising Star', desc: 'Reached Level 5' });
-    if (user.level >= 10) badges.push({ icon: '👑', title: 'Learning King', desc: 'Reached Level 10' });
-    if (user.quizHistory.length >= 10) badges.push({ icon: '🎯', title: 'Quiz Master', desc: '10+ quizzes completed' });
+    if (user.streak >= 7) badges.push({ icon: Flame, title: 'Week Warrior', desc: '7+ day streak' });
+    if (user.streak >= 30) badges.push({ icon: Zap, title: 'Month Master', desc: '30+ day streak' });
+    if (user.level >= 5) badges.push({ icon: Star, title: 'Rising Star', desc: 'Reached Level 5' });
+    if (user.level >= 10) badges.push({ icon: Crown, title: 'Learning King', desc: 'Reached Level 10' });
+    if (user.quizHistory.length >= 10) badges.push({ icon: Target, title: 'Quiz Master', desc: '10+ quizzes completed' });
     return badges;
   };
 
@@ -57,12 +58,12 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               </h1>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
                 <div className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-shadow">
-                  <div className="text-2xl mb-1 text-yellow-500">⭐</div>
+                  <Star className="w-6 h-6 mb-1 text-yellow-500" />
                   <div className="text-blue-900 font-bold text-lg">Level {user.level}</div>
                   <div className="text-blue-700 text-sm font-medium">{user.xp.toLocaleString()} XP</div>
                 </div>
                 <div className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-2xl p-4 shadow-md hover:shadow-lg transition-shadow">
-                  <div className="text-2xl mb-1 text-orange-500">🔥</div>
+                  <Flame className="w-6 h-6 mb-1 text-orange-500" />
                   <div className="text-blue-900 font-bold text-lg">{user.streak} Days</div>
                   <div className="text-blue-700 text-sm font-medium">Current Streak</div>
                 </div>
@@ -76,7 +77,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                     {user.xpToNextLevel ? `${Math.max(0, (calculateXPForLevel(user.level + 1) - user.xpToNextLevel))}/${calculateXPForLevel(user.level + 1)}` : `${user.xp % 100}/100`} XP
                   </span>
                 </div>
-                <div className="w-full bg-blue-100/80 rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-blue-300 rounded-full h-3 overflow-hidden">
                   <div 
                     className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden shadow-inner"
                     style={{ 
@@ -98,13 +99,13 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
       {getAchievementBadges().length > 0 && (
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <span className="text-4xl">🏆</span>
+            <Trophy className="w-8 h-8 text-yellow-500" />
             Achievement Badges
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {getAchievementBadges().map((badge, index) => (
               <div key={index} className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl p-6 text-center transform hover:scale-105 transition-all duration-200">
-                <div className="text-4xl mb-3">{badge.icon}</div>
+                <badge.icon className="w-10 h-10 mb-3 mx-auto text-yellow-600" />
                 <h3 className="font-bold text-gray-900 text-lg mb-1">{badge.title}</h3>
                 <p className="text-gray-600 text-sm">{badge.desc}</p>
               </div>

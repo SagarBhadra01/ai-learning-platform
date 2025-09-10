@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Send, X } from 'lucide-react';
 import axios from 'axios';
 import type { ChatMessage } from './index';
 
@@ -53,9 +54,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
         <h3 className="text-lg font-bold text-white">AI Tutor</h3>
         <button 
           onClick={onClose} 
-          className="text-white hover:text-gray-200 text-2xl leading-none"
+          className="text-white hover:text-gray-200 p-1 rounded-md hover:bg-white/10 transition-colors"
         >
-          &times;
+          <X className="w-5 h-5" />
         </button>
       </header>
       
@@ -96,23 +97,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
           />
           <button 
             type="submit" 
-            className="p-2 text-blue-600 hover:text-blue-700 rounded-lg m-1" 
+            className="p-2 text-blue-600 hover:text-blue-700 rounded-lg m-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" 
             disabled={isLoading}
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 rotate-90" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
+            <Send className="w-5 h-5" />
           </button>
         </div>
       </form>

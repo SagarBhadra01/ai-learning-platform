@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Home, BookOpen, Plus, User } from 'lucide-react';
 import type { View } from './types';
 
 interface SidebarProps {
@@ -25,11 +26,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const menuItems: Array<{ id: View; label: string; icon: string }> = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'bookmarks', label: 'Bookmarks', icon: '📚' },
-    { id: 'generate', label: 'Create Course', icon: '➕' },
-    { id: 'profile', label: 'Profile', icon: '👤' },
+  const menuItems: Array<{ id: View; label: string; icon: React.ComponentType<any> }> = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'bookmarks', label: 'Bookmarks', icon: BookOpen },
+    { id: 'generate', label: 'Create Course', icon: Plus },
+    { id: 'profile', label: 'Profile', icon: User },
   ];
 
   return (
@@ -96,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isO
                 <div className={`flex-shrink-0 transition-transform duration-200 ${
                   currentView === item.id ? 'scale-110' : 'group-hover:scale-105'
                 }`}>
-                  {item.icon}
+                  <item.icon className="w-5 h-5" />
                 </div>
                 {(!isCollapsed || isOpen) && (
                   <span className="font-medium text-sm truncate">{item.label}</span>

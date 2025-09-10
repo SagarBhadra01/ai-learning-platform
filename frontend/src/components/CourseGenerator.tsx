@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useUser } from '@clerk/clerk-react';
+import { Sprout, Rocket, Zap, Sparkles, BookOpen, Target, Star, Brain, GraduationCap } from 'lucide-react';
 import type { Course } from './index';
+import { useUser } from '@clerk/clerk-react';
+import axios from 'axios';
 
 interface CourseGeneratorProps {
   onCourseCreated: (course: Course) => void;
@@ -107,9 +108,9 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
                                                     <div className={`text-4xl transition-transform group-hover:scale-110 ${
                                                         level === levelOption ? 'animate-pulse' : ''
                                                     }`}>
-                                                        {levelOption === 'Beginner' && '🌱'}
-                                                        {levelOption === 'Intermediate' && '🚀'}
-                                                        {levelOption === 'Advanced' && '⚡'}
+                                                        {levelOption === 'Beginner' && <Sprout className="w-10 h-10 mx-auto" />}
+                                                        {levelOption === 'Intermediate' && <Rocket className="w-10 h-10 mx-auto" />}
+                                                        {levelOption === 'Advanced' && <Zap className="w-10 h-10 mx-auto" />}
                                                     </div>
                                                     <div className={`font-bold text-lg ${
                                                         level === levelOption ? 'text-blue-700' : 'text-gray-700'
@@ -192,18 +193,18 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
                             <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                                <span className="text-3xl mr-3">✨</span>
+                                <Sparkles className="w-8 h-8 mr-3 text-blue-600" />
                                 AI-Powered Features
                             </h3>
                             <div className="space-y-4">
                                 {[
-                                    { icon: '📚', title: 'Structured Chapters', desc: 'Organized learning modules' },
-                                    { icon: '🎯', title: 'Interactive Quizzes', desc: 'Test your knowledge' },
-                                    { icon: '⭐', title: 'Progress Tracking', desc: 'Monitor your advancement' },
-                                    { icon: '🧠', title: 'Smart Content', desc: 'AI-generated explanations' }
+                                    { icon: BookOpen, title: 'Structured Chapters', desc: 'Organized learning modules' },
+                                    { icon: Target, title: 'Interactive Quizzes', desc: 'Test your knowledge' },
+                                    { icon: Star, title: 'Progress Tracking', desc: 'Monitor your advancement' },
+                                    { icon: Brain, title: 'Smart Content', desc: 'AI-generated explanations' }
                                 ].map((feature, index) => (
                                     <div key={index} className="flex items-start space-x-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-emerald-50 transition-all duration-300">
-                                        <div className="text-2xl">{feature.icon}</div>
+                                        <feature.icon className="w-6 h-6 text-blue-600" />
                                         <div>
                                             <h4 className="font-semibold text-gray-900">{feature.title}</h4>
                                             <p className="text-gray-600 text-sm">{feature.desc}</p>
@@ -214,7 +215,7 @@ const CourseGenerator: React.FC<CourseGeneratorProps> = ({ onCourseCreated }) =>
                         </div>
 
                         <div className="bg-gradient-to-br from-blue-100 to-emerald-100 rounded-3xl p-8 text-center">
-                            <div className="text-6xl mb-4">🎓</div>
+                            <GraduationCap className="w-16 h-16 mx-auto mb-4 text-blue-600" />
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Ready to Learn?</h3>
                             <p className="text-gray-600 text-sm">
                                 Our AI will create a personalized learning path just for you

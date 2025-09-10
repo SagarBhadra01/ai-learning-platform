@@ -1,17 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import { Lock, CheckCircle, PartyPopper } from 'lucide-react';
 import type { Course, QuizResult, QuizProgress } from './index';
+import axios from 'axios';
+import { useUser } from '@clerk/clerk-react';
+
+interface QuizCompletionResponse {
+  message: string;
+  passed: boolean;
+  score: number;
+  totalQuestions: number;
+  percentage: number;
+  xpEarned: number;
+  leveledUp?: boolean;
+  newLevel?: number;
+  totalXP?: number;
+  currentLevel?: number;
+  attempts: number;
+  requiredPercentage?: number;
+  chapterCompleted?: boolean;
+  isLastLessonInChapter?: boolean;
+}
 
 interface LearningViewProps {
   course: Course;
   onMarkComplete: (courseId: string, chapIdx: number, lessIdx: number, xp: number, quizResult?: Omit<QuizResult, 'date'>) => void;
   quizProgress: QuizProgress | null;
   onUpdateQuizProgress: (progress: QuizProgress) => void;
+  onCourseUpdate?: () => void;
 }
 
-const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, quizProgress, onUpdateQuizProgress }) => {
+const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, quizProgress, onUpdateQuizProgress, onCourseUpdate }) => {
+    const { user: clerkUser } = useUser();
     const [activeLesson, setActiveLesson] = useState<{ chap: number, less: number } | null>({ chap: 0, less: 0 });
     const [isQuizSubmitted, setIsQuizSubmitted] = useState(false);
     const [quizResult, setQuizResult] = useState<Omit<QuizResult, 'date'> | null>(null);
+    const [quizResponse, setQuizResponse] = useState<QuizCompletionResponse | null>(null);
+    const [isSubmittingQuiz, setIsSubmittingQuiz] = useState(false);
+    const [isRegeneratingQuiz, setIsRegeneratingQuiz] = useState(false);
 
     const currentLesson = activeLesson ? course.chapters[activeLesson.chap].lessons[activeLesson.less] : null;
 
@@ -33,21 +58,91 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
         onUpdateQuizProgress({ ...progress, answers: newAnswers }); 
     };
     
-    const handleSubmitQuiz = () => {
-        if (!activeLesson || !currentLesson || !currentLesson.quiz || !quizProgress) return;
+    const handleSubmitQuiz = async () => {
+        if (!activeLesson || !currentLesson || !currentLesson.quiz || !quizProgress || !clerkUser) return;
+        
+        setIsSubmittingQuiz(true);
         const quiz = currentLesson.quiz;
         let correct = 0;
         quiz.questions.forEach((q, i) => { if (quizProgress.answers[i] === q.correctAnswer) { correct++; } });
-        const score = Math.round((correct / quiz.questions.length) * 100);
-        const result: Omit<QuizResult, 'date'> = { 
-            courseId: course.id, 
-            quizTitle: quiz.title, 
-            score, 
-            correct, 
-            total: quiz.questions.length, 
-        };
-        setQuizResult(result);
-        setIsQuizSubmitted(true);
+        
+        try {
+            const response = await axios.post<QuizCompletionResponse>('http://localhost:5001/api/quiz/complete', {
+                userId: clerkUser.id,
+                courseId: course.id,
+                chapterIndex: activeLesson.chap,
+                lessonIndex: activeLesson.less,
+                score: correct,
+                totalQuestions: quiz.questions.length
+            });
+            
+            setQuizResponse(response.data);
+            const result: Omit<QuizResult, 'date'> = { 
+                courseId: course.id, 
+                quizTitle: quiz.title, 
+                score: response.data.percentage,
+                correct,
+                total: quiz.questions.length
+            };
+            setQuizResult(result);
+            setIsQuizSubmitted(true);
+            
+            if (response.data.passed) {
+                // Call parent to refresh course data instead of reloading page
+                if (onCourseUpdate) {
+                    onCourseUpdate();
+                }
+            }
+        } catch (error) {
+            console.error('Quiz submission error:', error);
+            setQuizResponse({ 
+                message: 'Failed to submit quiz. Please try again.',
+                passed: false,
+                score: correct,
+                totalQuestions: quiz.questions.length,
+                percentage: Math.round((correct / quiz.questions.length) * 100),
+                xpEarned: 0,
+                attempts: 1,
+                requiredPercentage: 75
+            });
+        } finally {
+            setIsSubmittingQuiz(false);
+        }
+    };
+
+    const handleTryAgain = async () => {
+        if (!activeLesson || !clerkUser) return;
+        
+        setIsRegeneratingQuiz(true);
+        try {
+            await axios.post('http://localhost:5001/api/quiz/regenerate', {
+                userId: clerkUser.id,
+                courseId: course.id,
+                chapterIndex: activeLesson.chap,
+                lessonIndex: activeLesson.less
+            });
+            
+            // Reset quiz state and refresh course data
+            setIsQuizSubmitted(false);
+            setQuizResult(null);
+            setQuizResponse(null);
+            onUpdateQuizProgress({
+                courseId: course.id,
+                chapterIndex: activeLesson.chap,
+                lessonIndex: activeLesson.less,
+                currentQuestionIndex: 0,
+                answers: {}
+            });
+            
+            if (onCourseUpdate) {
+                onCourseUpdate();
+            }
+        } catch (error) {
+            console.error('Error regenerating quiz:', error);
+            alert('Failed to generate new quiz questions. Please try again.');
+        } finally {
+            setIsRegeneratingQuiz(false);
+        }
     };
 
     const handleContinue = () => {
@@ -68,38 +163,91 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
                     {course.title}
                 </h3>
                 <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-2">
-                    {course.chapters.map((chap, chapIdx) => (
+                    {course.chapters.map((chap, chapIdx) => {
+                        const isChapterLocked = chap.unlocked === false;
+                        const isChapterCompleted = chap.completed;
+                        
+                        return (
                         <div key={chapIdx} className="mb-4">
-                            <h4 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                                <span className="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full text-xs">{chapIdx + 1}</span>
+                            <h4 className={`font-semibold mb-2 flex items-center gap-2 ${
+                                isChapterLocked ? 'text-gray-400' : 'text-gray-700'
+                            }`}>
+                                <span className={`w-5 h-5 flex items-center justify-center rounded-full text-xs ${
+                                    isChapterLocked 
+                                        ? 'bg-gray-100 text-gray-400' 
+                                        : isChapterCompleted
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-blue-100 text-blue-700'
+                                }`}>
+                                    {isChapterLocked ? <Lock className="w-3 h-3" /> : chapIdx + 1}
+                                </span>
                                 {chap.title}
+                                {isChapterCompleted && (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                )}
                             </h4>
+                            {isChapterLocked && (
+                                <div className="text-xs text-gray-400 mb-2 ml-7">
+                                    Complete previous chapter to unlock
+                                </div>
+                            )}
                             <ul className="space-y-1 pl-7">
-                                {chap.lessons.map((less, lessIdx) => (
-                                    <li 
-                                        key={lessIdx} 
-                                        className={`p-2 rounded-md cursor-pointer transition-all duration-200 ${
-                                            activeLesson?.chap === chapIdx && activeLesson?.less === lessIdx 
-                                                ? 'bg-blue-50 text-blue-700 font-medium shadow-sm border border-blue-100' 
-                                                : 'text-gray-600 hover:bg-gray-50'
-                                        } ${less.completed ? 'text-green-600' : ''}`} 
-                                        onClick={() => setActiveLesson({ chap: chapIdx, less: lessIdx })}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <span>{less.title}</span>
-                                            {less.completed && (
-                                                <span className="text-green-500">
-                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                    </svg>
-                                                </span>
+                                {chap.lessons.map((less, lessIdx) => {
+                                    const isLocked = less.unlocked === false;
+                                    const isActive = activeLesson?.chap === chapIdx && activeLesson?.less === lessIdx;
+                                    
+                                    return (
+                                        <li 
+                                            key={lessIdx} 
+                                            className={`p-2 rounded-md transition-all duration-200 ${
+                                                isLocked 
+                                                    ? 'opacity-50 cursor-not-allowed bg-gray-100' 
+                                                    : 'cursor-pointer hover:bg-gray-50'
+                                            } ${
+                                                isActive && !isLocked
+                                                    ? 'bg-blue-50 text-blue-700 font-medium shadow-sm border border-blue-100' 
+                                                    : isLocked ? 'text-gray-400' : 'text-gray-600'
+                                            } ${less.completed ? 'text-green-600' : ''}`} 
+                                            onClick={() => !isLocked && setActiveLesson({ chap: chapIdx, less: lessIdx })}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    {isLocked && (
+                                                        <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                                        </svg>
+                                                    )}
+                                                    <span>{less.title}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    {less.quizScore !== undefined && less.attempts && less.attempts > 0 && (
+                                                        <span className={`text-xs px-2 py-1 rounded ${
+                                                            less.quizPassed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                        }`}>
+                                                            {less.quizScore}%
+                                                        </span>
+                                                    )}
+                                                    {less.completed && (
+                                                        <span className="text-green-500">
+                                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                                </svg>
+                                                            </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {isLocked && (
+                                                <div className="text-xs text-gray-400 mt-1">
+                                                    Complete previous lesson with 50%+ to unlock
+                                                </div>
                                             )}
-                                        </div>
-                                    </li>
-                                ))}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
-                    ))}
+                    );
+                    })}
                 </div>
             </aside>
 
@@ -130,8 +278,33 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
                             dangerouslySetInnerHTML={{ __html: currentLesson.content }}
                         ></div>
                         
+                        {/* Locked Lesson Message */}
+                        {currentLesson.unlocked === false && (
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mt-8">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="bg-yellow-100 p-2 rounded-lg">
+                                        <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-yellow-800">Lesson Locked</h3>
+                                </div>
+                                <p className="text-yellow-700 mb-4">
+                                    You need to complete the previous lesson with at least 75% quiz score to unlock this lesson.
+                                </p>
+                                <div className="bg-white p-4 rounded-lg border border-yellow-200">
+                                    <h4 className="font-semibold text-yellow-800 mb-2">Requirements:</h4>
+                                    <ul className="text-yellow-700 space-y-1">
+                                        <li>• Complete the previous lesson</li>
+                                        <li>• Score 75% or higher on the quiz</li>
+                                        <li>• Then this lesson will automatically unlock</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Quiz Section */}
-                        {currentLesson.quiz && !currentLesson.completed && (
+                        {currentLesson.quiz && !currentLesson.completed && currentLesson.unlocked !== false && (
                             <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-6 sm:p-8 mt-12">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="bg-blue-100 p-2 rounded-lg">
@@ -207,28 +380,122 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
                                         {!isQuizSubmitted ? (
                                             <button 
                                                 onClick={handleSubmitQuiz} 
-                                                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors flex-1 sm:flex-none sm:w-auto"
+                                                disabled={isSubmittingQuiz}
+                                                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg shadow-sm transition-colors flex-1 sm:flex-none sm:w-auto flex items-center gap-2"
                                             >
-                                                Submit Quiz
+                                                {isSubmittingQuiz && (
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                )}
+                                                {isSubmittingQuiz ? 'Submitting...' : 'Submit Quiz'}
                                             </button>
                                         ) : (
-                                            <div className="w-full bg-white border border-green-100 rounded-xl p-6 text-center">
-                                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 text-green-500 mb-4">
-                                                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                    </svg>
+                                            <div className={`w-full border rounded-xl p-6 text-center ${
+                                                quizResponse?.passed 
+                                                    ? 'bg-white border-green-100' 
+                                                    : 'bg-red-50 border-red-200'
+                                            }`}>
+                                                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+                                                    quizResponse?.passed 
+                                                        ? 'bg-green-50 text-green-500' 
+                                                        : 'bg-red-100 text-red-500'
+                                                }`}>
+                                                    {quizResponse?.passed ? (
+                                                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                            </svg>
+                                                        ) : (
+                                                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                        </svg>
+                                                    )}
                                                 </div>
-                                                <h4 className="text-xl font-bold text-gray-900 mb-1">Quiz Complete!</h4>
-                                                <p className="text-gray-600 mb-6">
-                                                    You scored <span className="font-bold text-blue-600">{quizResult?.score}%</span> 
+                                                <h4 className={`text-xl font-bold mb-1 ${
+                                                    quizResponse?.passed ? 'text-gray-900' : 'text-red-800'
+                                                }`}>
+                                                    {quizResponse?.passed ? 'Quiz Passed!' : 'Quiz Failed'}
+                                                </h4>
+                                                <p className={`mb-6 ${
+                                                    quizResponse?.passed ? 'text-gray-600' : 'text-red-700'
+                                                }`}>
+                                                    You scored <span className={`font-bold ${
+                                                        quizResponse?.passed ? 'text-blue-600' : 'text-red-600'
+                                                    }`}>{quizResponse?.percentage || quizResult?.score}%</span> 
                                                     ({quizResult?.correct} out of {quizResult?.total} correct)
                                                 </p>
-                                                <button 
-                                                    onClick={handleContinue} 
-                                                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto"
-                                                >
-                                                    Continue Learning
-                                                </button>
+                                                {quizResponse?.passed ? (
+                                                    <div>
+                                                        {quizResponse.chapterCompleted ? (
+                                                            <div>
+                                                                <div className="flex items-center gap-2 text-green-700 mb-2 font-medium">
+                                                                    <PartyPopper className="w-5 h-5" />
+                                                                    <span>Chapter Completed!</span>
+                                                                </div>
+                                                                <p className="text-green-600 mb-4 text-sm">
+                                                                    You've mastered all lessons in this chapter. Next chapter is now unlocked!
+                                                                </p>
+                                                                <div className="flex flex-col sm:flex-row gap-3">
+                                                                    <button 
+                                                                        onClick={() => {
+                                                                            // Move to first lesson of next chapter
+                                                                            const nextChapter = activeLesson!.chap + 1;
+                                                                            if (nextChapter < course.chapters.length) {
+                                                                                setActiveLesson({ chap: nextChapter, less: 0 });
+                                                                                setIsQuizSubmitted(false);
+                                                                                setQuizResult(null);
+                                                                                setQuizResponse(null);
+                                                                            }
+                                                                        }}
+                                                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto"
+                                                                    >
+                                                                        Continue to Next Chapter
+                                                                    </button>
+                                                                    <button 
+                                                                        onClick={handleContinue} 
+                                                                        className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto"
+                                                                    >
+                                                                        Stay in Current Chapter
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div>
+                                                                <div className="flex items-center gap-2 text-green-700 mb-4 font-medium">
+                                                                    <PartyPopper className="w-5 h-5" />
+                                                                    <span>Congratulations! Next lesson unlocked!</span>
+                                                                </div>
+                                                                <button 
+                                                                    onClick={handleContinue} 
+                                                                    className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto"
+                                                                >
+                                                                    Continue to Next Lesson
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <p className="text-red-700 mb-4 font-medium">
+                                                            You need 50% to unlock the next lesson. Try again!
+                                                        </p>
+                                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                                            <button 
+                                                                onClick={handleTryAgain}
+                                                                disabled={isRegeneratingQuiz}
+                                                                className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white font-medium rounded-lg shadow-sm transition-colors w-full sm:w-auto flex items-center gap-2 justify-center"
+                                                            >
+                                                                {isRegeneratingQuiz && (
+                                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                                )}
+                                                                {isRegeneratingQuiz ? 'Generating New Questions...' : 'Try Again with New Questions'}
+                                                            </button>
+                                                        </div>
+                                                        {quizResponse?.attempts && (
+                                                            <p className="text-sm text-red-600 mt-3">
+                                                                Attempt {quizResponse.attempts} • Keep trying, you can do it!
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -237,7 +504,7 @@ const LearningView: React.FC<LearningViewProps> = ({ course, onMarkComplete, qui
                         )}
 
                         {/* Mark Complete Button (for non-quiz lessons) */}
-                        {!currentLesson.completed && !currentLesson.quiz && activeLesson && (
+                        {!currentLesson.completed && !currentLesson.quiz && activeLesson && currentLesson.unlocked !== false && (
                             <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end">
                                 <button 
                                     onClick={() => onMarkComplete(course.id, activeLesson.chap, activeLesson.less, currentLesson.xp)} 

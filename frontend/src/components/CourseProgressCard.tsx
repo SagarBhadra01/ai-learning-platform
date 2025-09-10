@@ -1,4 +1,5 @@
 import React from 'react';
+import { PartyPopper } from 'lucide-react';
 import type { Course } from './types';
 
 interface CourseProgressCardProps {
@@ -88,7 +89,7 @@ export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({ course, 
       {isCompleted ? (
         <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg border border-emerald-300">
           <div className="flex items-center space-x-2">
-            <span className="text-green-400 text-xl">🎉</span>
+            <PartyPopper className="w-5 h-5 text-green-400" />
             <span className="text-emerald-700 font-semibold">Course Completed!</span>
           </div>
           <button

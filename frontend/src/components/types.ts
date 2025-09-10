@@ -24,11 +24,17 @@ export interface Lesson {
   xp: number; 
   completed: boolean; 
   quiz?: Quiz; 
+  unlocked?: boolean;
+  quizScore?: number;
+  quizPassed?: boolean;
+  attempts?: number;
 }
 
 export interface Chapter { 
   title: string; 
-  lessons: Lesson[]; 
+  lessons: Lesson[];
+  completed?: boolean;
+  unlocked?: boolean;
 }
 
 export interface Course { 

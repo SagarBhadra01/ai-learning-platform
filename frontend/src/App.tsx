@@ -23,6 +23,7 @@ import type {
 } from './components';
 import { BookmarkProvider } from './contexts/BookmarkContext';
 
+
 // --- Environment Variable Setup for Vite ---
 const FRONTEND_GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -75,6 +76,8 @@ const LearnSphereApp: React.FC = () => {
             loadUserXP(clerkUser.id);
         }
     }, [isLoaded, clerkUser]);
+
+
 
     // Function to load user XP data from backend
     const loadUserXP = async (userId: string) => {
@@ -132,28 +135,29 @@ const LearnSphereApp: React.FC = () => {
         setGeneratingImages(prev => { const newSet = new Set(prev); newSet.delete(id); return newSet; });
     }, [getAiImageKeywords, getImageUrlForTopic]);
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            if (!clerkUser?.id) return;
-            
-            setIsLoading(true);
-            setFetchError(null);
-            try {
-                const response = await axios.get<Course[]>(`http://localhost:5001/api/courses?userId=${clerkUser.id}`);
-                const initialCourses = response.data.map(c => ({ 
-                    ...c, 
-                    id: c._id || c.id, 
-                    imageUrl: getImageUrlForTopic(c.title, c._id || c.id) 
-                }));
-                setCourses(initialCourses);
-            } catch (error: any) {
-                setFetchError(error.message || "A network error occurred.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchCourses();
+    const fetchCourses = useCallback(async () => {
+        if (!clerkUser?.id) return;
+        
+        setIsLoading(true);
+        setFetchError(null);
+        try {
+            const response = await axios.get<Course[]>(`http://localhost:5001/api/courses?userId=${clerkUser.id}`);
+            const initialCourses = response.data.map(c => ({ 
+                ...c, 
+                id: c._id || c.id, 
+                imageUrl: getImageUrlForTopic(c.title, c._id || c.id) 
+            }));
+            setCourses(initialCourses);
+        } catch (error: any) {
+            setFetchError(error.message || "A network error occurred.");
+        } finally {
+            setIsLoading(false);
+        }
     }, [clerkUser?.id, getImageUrlForTopic]);
+
+    useEffect(() => {
+        fetchCourses();
+    }, [fetchCourses]);
 
     const handleAddCourse = useCallback((newCourseData: Course) => {
         const newCourse = { ...newCourseData, id: newCourseData._id || newCourseData.id, imageUrl: '' };
@@ -251,7 +255,7 @@ const LearnSphereApp: React.FC = () => {
             case 'dashboard': return <ModernDashboard courses={courses} user={user} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} onDeleteCourse={handleDeleteCourse} isLoading={isLoading} error={fetchError} generatingImages={generatingImages}/>;
             case 'bookmarks': return <BookmarkedCourses courses={courses} onStartLearning={handleStartLearning} onDeleteCourse={handleDeleteCourse} generatingImages={generatingImages} />;
             case 'generate': return <CourseGenerator onCourseCreated={handleAddCourse} />;
-            case 'learn': if(activeCourse) { return <LearningView course={activeCourse} onMarkComplete={handleMarkLessonComplete} quizProgress={quizProgress} onUpdateQuizProgress={handleUpdateQuizProgress} />; } else { setView('dashboard'); return null; }
+            case 'learn': if(activeCourse) { return <LearningView course={activeCourse} onMarkComplete={handleMarkLessonComplete} quizProgress={quizProgress} onUpdateQuizProgress={handleUpdateQuizProgress} onCourseUpdate={fetchCourses} />; } else { setView('dashboard'); return null; }
             case 'profile': return <Profile user={user} />;
             default: return <ModernDashboard courses={courses} user={user} onStartLearning={handleStartLearning} onCreateNew={() => setView('generate')} onDeleteCourse={handleDeleteCourse} isLoading={isLoading} error={fetchError} generatingImages={generatingImages} />;
         }
@@ -286,10 +290,10 @@ const LearnSphereApp: React.FC = () => {
             <div className="fixed bottom-5 right-5 z-40">
                 <button 
                     onClick={() => setIsChatOpen(!isChatOpen)} 
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl shadow-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-110" 
+                    className=" bg-transparent text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl hover:bg-transparent transition-all transform hover:scale-110 duration-300 " 
                     aria-label="Toggle AI Tutor"
                 >
-                    🤖
+                    <img src="   https://cdn-icons-png.flaticon.com/512/5292/5292531.png " alt="" className='w-12 h-12'/>
                 </button>
             </div>
             
@@ -302,7 +306,13 @@ const LearnSphereApp: React.FC = () => {
 const App: React.FC = () => (
     <BookmarkProvider>
         <SignedOut><SignInPage /></SignedOut>
-        <SignedIn><LearnSphereApp /></SignedIn>
+        <SignedIn>
+            <>
+                <LearnSphereApp />
+                
+                
+            </>
+        </SignedIn>
     </BookmarkProvider>
 );
 
