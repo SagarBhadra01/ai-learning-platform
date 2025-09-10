@@ -44,10 +44,8 @@ export const Header: React.FC<HeaderProps> = ({ user, onMenuToggle }) => {
             </button>
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300 border border-white/20">
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300 border border-white/20">
+                <img src="/favicon.png" alt="Logo" className="w-full h-full object-cover rounded-xl" />
               </div>
             </div>
             <div className="hidden sm:block">
