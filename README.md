@@ -100,7 +100,7 @@ Make sure you have Node.js and npm installed on your machine.
     ```
     The server will start, typically on `http://localhost:5001`.
 
-2.  **Start the Frontend Development Server:**
+2.  **Start the Frontend Development Server:**.
     From the `frontend` directory, run:
     ```sh
     npm run dev
