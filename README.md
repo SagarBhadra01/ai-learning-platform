@@ -44,7 +44,7 @@ LearnSphere is a cutting-edge, AI-powered learning platform that democratizes ed
 ![Mobile View](./Preview/Mobile.jpeg)
 
 ### 🤖 AI Course Generation
-![AI Generation](./Preview/Curse.jpeg)
+![AI Generation](./Preview/Course.jpeg)
 
 </div>
 
